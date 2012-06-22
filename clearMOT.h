@@ -44,7 +44,7 @@ public:
 	MOTResult getMOT(bool is_det=false) ;
 	void paintFrame(Mat& frame);
 
-	C_Mot(double thresh=0.3)
+	C_Mot(double thresh=0.0)
 		:IOU_threshold(thresh),frame_count(0),error_sum(0),M_sum(0),FP_sum(0),IS_sum(0),match_count(0),gt_count(0){}
 	~C_Mot(){}
 
