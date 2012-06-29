@@ -1,22 +1,36 @@
+/*************************************************************
+*	Implemetation of the multi-person tracking system described in paper
+*	"Online Multi-person Tracking by Tracker Hierarchy", Jianming Zhang, 
+*	Liliana Lo Presti, Stan Sclaroff, AVSS 2012
+*
+*	Copyright (C) 2012 Jianming Zhang
+*
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*	If you have problems about this software, please contact: jmzhang@bu.edu
+***************************************************************/
+
+
 #ifndef _PARAMETER_
 #define _PARAMETER_
 
 #define RESULT_OUTPUT_XML_FILE "temp.xml"
 #define GT_XML_FILE "TownCentre_GT.xml"
 
-extern double AUX_phi1;
-extern double AUX_phi2;
-extern double AUX_gamma1;
-extern double AUX_gamma2;
-extern double AUX_N_max;
-extern double AUX_K;
-extern double AUX_kf_process;
-extern double AUX_kf_measure;
-
-
 // multi-object level tracking parameter
 const static int TRACKER_NUM=60;
-const static int TRA_GROUP_SIZE=10*AUX_N_max;
+const static int TRA_GROUP_SIZE=10;
 const static double GT_TO_DETECTION_RATIO=1.0;//0.64
 const static double TRACKING_TO_GT_RATIO=0.5;//0.5
 const static double TRACKING_TO_DETECTION=GT_TO_DETECTION_RATIO*TRACKING_TO_GT_RATIO;

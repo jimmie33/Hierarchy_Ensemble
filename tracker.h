@@ -1,3 +1,27 @@
+/*************************************************************
+*	Implemetation of the multi-person tracking system described in paper
+*	"Online Multi-person Tracking by Tracker Hierarchy", Jianming Zhang, 
+*	Liliana Lo Presti, Stan Sclaroff, AVSS 2012
+*
+*	Copyright (C) 2012 Jianming Zhang
+*
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*	If you have problems about this software, please contact: jmzhang@bu.edu
+***************************************************************/
+
+
 #ifndef TRACKER_H
 #define TRACKER_H
 
@@ -17,7 +41,7 @@ class EnsembleTracker
 {
 
 public:
-	EnsembleTracker(int id,Size body_size,double phi1=0.5*AUX_phi1,double phi2=1.5*AUX_phi2,double phi_max=4.0);		
+	EnsembleTracker(int id,Size body_size,double phi1=0.5,double phi2=1.5,double phi_max=4.0);		
 	~EnsembleTracker();	
 
 	//reference counting
@@ -105,8 +129,8 @@ public:
 	inline void updateKfCov(double body_width)
 	{
 		Mat m_temp=*(Mat_<float>(4,4)<<0.025,0,0,0,0,0.025,0,0,0,0,0.25,0,0,0,0,0.25);
-		_kf.processNoiseCov=m_temp*AUX_kf_process*((float)body_width/_FRAME_RATE)*((float)body_width/_FRAME_RATE); // TODO: should update cov each step
-		setIdentity(_kf.measurementNoiseCov,Scalar::all(1.0*AUX_kf_measure*(float)body_width*(float)body_width));
+		_kf.processNoiseCov=m_temp*((float)body_width/_FRAME_RATE)*((float)body_width/_FRAME_RATE); // TODO: should update cov each step
+		setIdentity(_kf.measurementNoiseCov,Scalar::all(1.0*(float)body_width*(float)body_width));
 	}
 
 private:

@@ -1,3 +1,27 @@
+/*************************************************************
+*	Implemetation of the multi-person tracking system described in paper
+*	"Online Multi-person Tracking by Tracker Hierarchy", Jianming Zhang, 
+*	Liliana Lo Presti, Stan Sclaroff, AVSS 2012
+*
+*	Copyright (C) 2012 Jianming Zhang
+*
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*	If you have problems about this software, please contact: jmzhang@bu.edu
+***************************************************************/
+
+
 #ifndef MULTI_TRACK_ASSOCIATION
 #define MULTI_TRACK_ASSOCIATION
 
@@ -18,32 +42,7 @@
 #define COUNT_NUM 1000.0
 #define SLIDING_WIN_SIZE 7.2*TIME_WINDOW_SIZE 
 
-
 using namespace cv;
-
-// stores configuration for tracker
-class HE_Config
-{
-public:
-	HE_Config();
-	void read(string filename);
-private:
-	int _frame_rate;
-	int _time_window_size;
-	
-	int _tracker_max_number;
-	int _template_max_number;
-	int _threshold_for_expert;
-
-	double _bodysize_detection_ratio;//0.64
-	double _tracking_bodysize_ratio;//0.5
-	double _tracking_detection_ratio;
-	
-	double _detector_frame_resize_ratio;
-
-	double _hist_update_rate;
-	double _novice_result_filter_hist_thresh;
-};
 
 class WaitingList
 {
@@ -90,7 +89,7 @@ public:
 	inline vector<Rect> getQualifiedCandidates()
 	{
 		double l=_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate);
-		return waitList.outputQualified((l-sqrt(l)*AUX_gamma1-1.0));		
+		return waitList.outputQualified((l-sqrt(l)-1.0));		
 	}
 private:
 	// a rotate array for keep record of the average hitting rate

@@ -1,3 +1,27 @@
+/*************************************************************
+*	Implemetation of the multi-person tracking system described in paper
+*	"Online Multi-person Tracking by Tracker Hierarchy", Jianming Zhang, 
+*	Liliana Lo Presti, Stan Sclaroff, AVSS 2012
+*
+*	Copyright (C) 2012 Jianming Zhang
+*
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*	If you have problems about this software, please contact: jmzhang@bu.edu
+***************************************************************/
+
+
 #include <cstdio>
 #include <iostream>
 
@@ -168,7 +192,7 @@ void Controller::deleteObsoleteTracker(list<EnsembleTracker*>& _tracker_list)
 	double l=_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate);
 	for (list<EnsembleTracker*>::iterator it=_tracker_list.begin();it!=_tracker_list.end();)
 	{	
-		if((*it)->getHitFreq()*TIME_WINDOW_SIZE<=MAX(l-2*AUX_gamma2*sqrt(l),0))
+		if((*it)->getHitFreq()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0))
 		{
 			(*it)->refcDec1();
 			(*it)->dump();
