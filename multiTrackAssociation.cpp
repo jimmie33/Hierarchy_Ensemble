@@ -496,7 +496,7 @@ void TrakerManager::doWork(Mat& frame)
 			rectangle(_occupancy_map,(*i)->getResult(),Scalar(1),-1);
 			
 		//kill the tracker if it gets out of border
-		Rect avgWin=(*i)->getBodysizeResult();
+		Rect avgWin=(*i)->getResult();
 		if (avgWin.x<=0 || 
 			avgWin.x+avgWin.width>=_frame_set[0].cols-1 || 
 			avgWin.y<=0 || 

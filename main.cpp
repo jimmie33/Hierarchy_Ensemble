@@ -42,14 +42,52 @@ using namespace std;
 static string _sequence_path_;
 static string _detection_xml_file_;
 
-int MAX_TRACKER_NUM=60;
-int MAX_TEMPLATE_SIZE=10;
-int EXPERT_THRESH=5;
-double BODYSIZE_TO_DETECTION_RATIO=1.0;//0.64
-double TRACKING_TO_BODYSIZE_RATIO=0.5;//0.5
-int FRAME_RATE=25;
-double TIME_WINDOW_SIZE=11;
-double HOG_DETECT_FRAME_RATIO=1.667;
+//Configuration by default
+int MAX_TRACKER_NUM;
+int MAX_TEMPLATE_SIZE;
+int EXPERT_THRESH;
+double BODYSIZE_TO_DETECTION_RATIO;
+double TRACKING_TO_BODYSIZE_RATIO;
+int FRAME_RATE;
+double TIME_WINDOW_SIZE;
+double HOG_DETECT_FRAME_RATIO;
+
+void read_config()
+{
+	ifstream conf_file("config.txt");
+	
+	if (!conf_file.is_open())
+	{
+		cerr<<"fail to load config.txt."<<endl;
+		exit(1);
+	}
+
+	string line;
+	while (conf_file.good())
+	{
+		getline(conf_file,line);
+		istringstream line_s(line);
+		string field;
+		line_s>>field;
+		if (field.compare("MAX_TRACKER_NUM:")==0)
+			line_s>>MAX_TRACKER_NUM;
+		else if (field.compare("FRAME_RATE:")==0)
+			line_s>>FRAME_RATE;
+		else if (field.compare("TIME_WINDOW_SIZE:")==0)
+			line_s>>TIME_WINDOW_SIZE;
+		else if (field.compare("HOG_DETECT_FRAME_RATIO:")==0)
+			line_s>>HOG_DETECT_FRAME_RATIO;
+		else if (field.compare("MAX_TEMPLATE_SIZE:")==0)
+			line_s>>MAX_TEMPLATE_SIZE;
+		else if (field.compare("EXPERT_THRESH")==0)
+			line_s>>EXPERT_THRESH;
+		else if (field.compare("BODYSIZE_TO_DETECTION_RATIO:")==0)
+			line_s>>BODYSIZE_TO_DETECTION_RATIO;
+		else if (field.compare("TRACKING_TO_BODYSIZE_RATIO:")==0)
+			line_s>>TRACKING_TO_BODYSIZE_RATIO;
+	}
+	conf_file.close();
+}
 
 void multiTrack(int readerType,int detectorType)
 {
@@ -137,6 +175,8 @@ int main(int argc,char** argv)
 		help();
 		exit(1);
 	}
+
+	read_config();
 
 	_sequence_path_=string(argv[1]);
 	int seq_format;
