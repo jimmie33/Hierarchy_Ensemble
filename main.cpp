@@ -39,13 +39,17 @@
 using namespace cv;
 using namespace std;
 
-//#define RECORD_VIDEO
-//#define  RECORD_IMAGE
-
 static string _sequence_path_;
 static string _detection_xml_file_;
-static string _result_xml_file_;
-static string _gt_xml_file_;// ground truth
+
+int MAX_TRACKER_NUM=60;
+int MAX_TEMPLATE_SIZE=10;
+int EXPERT_THRESH=5;
+double BODYSIZE_TO_DETECTION_RATIO=1.0;//0.64
+double TRACKING_TO_BODYSIZE_RATIO=0.5;//0.5
+int FRAME_RATE=25;
+double TIME_WINDOW_SIZE=11;
+double HOG_DETECT_FRAME_RATIO=1.667;
 
 void multiTrack(int readerType,int detectorType)
 {
@@ -85,11 +89,10 @@ void multiTrack(int readerType,int detectorType)
 		break;
 	}
 
-	TrakerManager mTrack(detector,frame,5);
+	TrakerManager mTrack(detector,frame,EXPERT_THRESH);
 	
-	for (int frameCount=0;frame.data!=NULL && frameCount<=4500;frameCount++)
+	for (int frameCount=0;frame.data!=NULL;frameCount++)
 	{
-		//resize(frame,frame,Size(1280,960));
 		mTrack.doWork(frame);
 		imshow("multiTrack", frame);
 		

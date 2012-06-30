@@ -32,6 +32,8 @@
 
 using namespace std;
 
+#define HIST_MATCH_THRESH_CONT 0.4//
+
 void WaitingList::update()
 {
 	for (list<Waiting>::iterator it=w_list.begin();it!=w_list.end();)
@@ -72,7 +74,7 @@ void WaitingList::feed(Rect gt_win,double response)
 		double y1=center.y;
 		double x2=(*it).center.x;
 		double y2=(*it).center.y;
-		double dis=sqrt(pow(x1-x2,2.0)+pow(y1-y2,2.0))*_FRAME_RATE;
+		double dis=sqrt(pow(x1-x2,2.0)+pow(y1-y2,2.0))*FRAME_RATE;
 		double scale_ratio=(*it).currentWin.width/(double)gt_win.width;
 		// greedily seek near detection with similar size as the consecutive one
 		// TODO: parameterize
@@ -94,7 +96,7 @@ Controller::Controller(Size sz,int r, int c,double vh,double lr,double thresh_ex
 	_frame_size(sz),
 	_bodyheight_learning_rate(lr),
 	_alpha_hitting_rate(4*TIME_WINDOW_SIZE),_beta_hitting_rate(5),
-	waitList(TIME_WINDOW_SIZE),
+	waitList((int)TIME_WINDOW_SIZE),
 	waitList_suspicious((int)(2*TIME_WINDOW_SIZE)),
 	_thresh_for_expert(thresh_expert)
 {
@@ -273,8 +275,8 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 		vector<bool> indicator;
 		for (int i=0;i<dt_size;i++)
 		{
-			Rect detect_win_GTsize=scaleWin(detections[i],GT_TO_DETECTION_RATIO);
-			Rect shrinkWin=scaleWin(detections[i],TRACKING_TO_DETECTION);
+			Rect detect_win_GTsize=scaleWin(detections[i],BODYSIZE_TO_DETECTION_RATIO);
+			Rect shrinkWin=scaleWin(detections[i],TRACKING_TO_DETECTION_RATIO);
 			list<EnsembleTracker*>::iterator j_tl=expert_class.begin();
 			for (int j=0; j<hp_size+dt_size;j++)
 			{
@@ -293,7 +295,7 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 						double dis_to_last=(*j_tl)->getDisToLast(shrinkWin);
 
 						/* ad hoc consistence enhancing rule, making association better*/
-						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(_FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width*1.0))
+						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width*1.0))
 						{								
 							matrix(i,j)=d;//*h;
 						}
@@ -314,7 +316,7 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 		{
 			bool flag=false;
 			list<EnsembleTracker*>::iterator j_tl=expert_class.begin();
-			Rect shrinkWin=scaleWin(detections[i],TRACKING_TO_DETECTION);
+			Rect shrinkWin=scaleWin(detections[i],TRACKING_TO_DETECTION_RATIO);
 			for (int j=0;j<hp_size;j++)
 			{
 				if (matrix(i,j)==0)//matched
@@ -325,7 +327,7 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 					if ((*j_tl)->getIsNovice())//release the suspension
 						(*j_tl)->promote();					
 					
-					while((*j_tl)->getTemplateNum()>TRA_GROUP_SIZE)
+					while((*j_tl)->getTemplateNum()>MAX_TEMPLATE_SIZE)
 						(*j_tl)->deletePoorestTemplate();
 					
 					break;
@@ -347,8 +349,8 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 		Matrix<double> matrix(dt_size, hp_size+dt_size);
 		for (int i=0;i<dt_size;i++)
 		{
-			Rect detect_win_GTsize=scaleWin(detection_left[i],GT_TO_DETECTION_RATIO);
-			Rect shrinkWin=scaleWin(detection_left[i],TRACKING_TO_DETECTION);
+			Rect detect_win_GTsize=scaleWin(detection_left[i],BODYSIZE_TO_DETECTION_RATIO);
+			Rect shrinkWin=scaleWin(detection_left[i],TRACKING_TO_DETECTION_RATIO);
 			list<EnsembleTracker*>::iterator j_tl=novice_class.begin();
 			for (int j=0; j<hp_size+dt_size;j++)
 			{
@@ -366,7 +368,7 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 						double dis_to_last=(*j_tl)->getDisToLast(shrinkWin);
 						
 						// ad hoc consistence enhancing rule, making association better
-						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(_FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width)*2)					
+						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width)*2)					
 							matrix(i,j)=d;//************could be changed
 						else
 							matrix(i,j)=INFINITY;
@@ -385,7 +387,7 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 		{
 			bool flag=false;
 			list<EnsembleTracker*>::iterator j_tl=novice_class.begin();
-			Rect shrinkWin=scaleWin(detection_left[i],TRACKING_TO_DETECTION);
+			Rect shrinkWin=scaleWin(detection_left[i],TRACKING_TO_DETECTION_RATIO);
 			for (int j=0;j<hp_size;j++)
 			{
 				if (matrix(i,j)==0)//matched
@@ -395,7 +397,7 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 					if ((*j_tl)->getIsNovice())//release the suspension
 						(*j_tl)->promote();					
 					
-					while((*j_tl)->getTemplateNum()>TRA_GROUP_SIZE)
+					while((*j_tl)->getTemplateNum()>MAX_TEMPLATE_SIZE)
 						(*j_tl)->deletePoorestTemplate();
 
 					break;
@@ -403,14 +405,14 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 				j_tl++;
 			}
 			if (!flag )
-				_controller.waitList.feed(scaleWin(detection_left[i],GT_TO_DETECTION_RATIO),1.0);
+				_controller.waitList.feed(scaleWin(detection_left[i],BODYSIZE_TO_DETECTION_RATIO),1.0);
 		}
 	}
 	//starting position
 	else if (dt_size>0)
 	{
 		for (int i=0;i<dt_size;i++)
-			_controller.waitList.feed(scaleWin(detection_left[i],GT_TO_DETECTION_RATIO),1.0);
+			_controller.waitList.feed(scaleWin(detection_left[i],BODYSIZE_TO_DETECTION_RATIO),1.0);
 	}
 }
 void TrakerManager::doWork(Mat& frame)
@@ -425,7 +427,7 @@ void TrakerManager::doWork(Mat& frame)
 	// resize the input image and detect objects
 	_occupancy_map=Mat(frame.rows,frame.cols,CV_8UC1,Scalar(0));
 	Mat frame_resize;
-	resize(frame,frame_resize,Size((int)(frame.cols*HOG_DETECT_WIN_RATIO),(int)(frame.rows*HOG_DETECT_WIN_RATIO)));
+	resize(frame,frame_resize,Size((int)(frame.cols*HOG_DETECT_FRAME_RATIO),(int)(frame.rows*HOG_DETECT_FRAME_RATIO)));
 	_detector->detect(frame_resize);// NOTE: the detections are resized into the normal size
 								   // TODO: parameterize.
 	vector<Rect> detections=_detector->getDetection();
@@ -438,7 +440,7 @@ void TrakerManager::doWork(Mat& frame)
 		vector<Rect> detection_bodysize;
 		for (size_t i=0;i<detections.size();i++)
 		{
-			detection_bodysize.push_back(scaleWin(detections[i],GT_TO_DETECTION_RATIO));
+			detection_bodysize.push_back(scaleWin(detections[i],BODYSIZE_TO_DETECTION_RATIO));
 		}
 		det_filter=_controller.filterDetection(detection_bodysize);
 	}
@@ -515,11 +517,11 @@ void TrakerManager::doWork(Mat& frame)
 	vector<Rect> qualified=_controller.getQualifiedCandidates();
 	for (size_t i=0;i<qualified.size();i++)
 	{
-		if (_tracker_list.size()<TRACKER_NUM)
+		if (_tracker_list.size()<MAX_TRACKER_NUM)
 		{
 			EnsembleTracker* tracker=new EnsembleTracker(_tracker_count,Size(qualified[i].width,qualified[i].height));
 			tracker->refcAdd1();
-			Rect iniWin=scaleWin(qualified[i],TRACKING_TO_GT_RATIO);
+			Rect iniWin=scaleWin(qualified[i],TRACKING_TO_BODYSIZE_RATIO);
 			tracker->addAppTemplate(_frame_set,iniWin);
 			_tracker_list.push_back(tracker);
 			_tracker_count++;	
@@ -540,7 +542,7 @@ void TrakerManager::doWork(Mat& frame)
 			//(*i)->drawResult(frame);
 			if (!(*i)->getIsNovice() || ((*i)->getIsNovice() && (*i)->compareHisto(bgr,(*i)->getBodysizeResult())>HIST_MATCH_THRESH_CONT))//***************
 			{
-				(*i)->drawResult(frame,1/TRACKING_TO_GT_RATIO);
+				(*i)->drawResult(frame,1/TRACKING_TO_BODYSIZE_RATIO);
 
 				Rect win=(*i)->getResultHistory().back();
 				Point tx(win.x,win.y-1);
@@ -550,7 +552,7 @@ void TrakerManager::doWork(Mat& frame)
 				putText(frame,s,tx,FONT_HERSHEY_PLAIN ,1.5,COLOR((*i)->getID()),2);
 
 				//output result to xml
-				double scale=1/TRACKING_TO_GT_RATIO-1;
+				double scale=1/TRACKING_TO_BODYSIZE_RATIO-1;
 				Size expand_size((int)(scale*win.width+0.5),(int)(scale*win.height+0.5));
 				win=win+expand_size-Point((int)(0.5*scale*win.width+0.5),(int)(0.5*scale*win.height+0.5));
 				output.push_back(Result2D((*i)->getID(),(float)(win.x+0.5*win.width),(float)(win.y+0.5*win.height),(float)win.width,(float)win.height));

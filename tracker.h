@@ -76,7 +76,7 @@ public:
 	
 	inline double getVel()//get velocity
 	{
-		return (abs(_kf.statePost.at<float>(2,0))+abs(_kf.statePost.at<float>(3,0)))*_FRAME_RATE;
+		return (abs(_kf.statePost.at<float>(2,0))+abs(_kf.statePost.at<float>(3,0)))*FRAME_RATE;
 	}
 	inline void setAddNew(bool b){_added_new=b;}
 	inline bool getAddNew(){return _added_new;}
@@ -100,7 +100,7 @@ public:
 	{
 		scale-=1;
 		Rect win=_result_history.back();//_result_history.back();
-		rectangle(frame,scaleWin(win,1/TRACKING_TO_GT_RATIO),COLOR(_ID),2);
+		rectangle(frame,scaleWin(win,1/TRACKING_TO_BODYSIZE_RATIO),COLOR(_ID),2);
 	}
 	inline void drawAssRadius(Mat& frame)
 	{
@@ -129,7 +129,7 @@ public:
 	inline void updateKfCov(double body_width)
 	{
 		Mat m_temp=*(Mat_<float>(4,4)<<0.025,0,0,0,0,0.025,0,0,0,0,0.25,0,0,0,0,0.25);
-		_kf.processNoiseCov=m_temp*((float)body_width/_FRAME_RATE)*((float)body_width/_FRAME_RATE); // TODO: should update cov each step
+		_kf.processNoiseCov=m_temp*((float)body_width/FRAME_RATE)*((float)body_width/FRAME_RATE); // TODO: should update cov each step
 		setIdentity(_kf.measurementNoiseCov,Scalar::all(1.0*(float)body_width*(float)body_width));
 	}
 

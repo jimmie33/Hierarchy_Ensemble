@@ -68,7 +68,7 @@ AppTemplate::AppTemplate(const Mat* frame_set, const Rect iniWin,int ID)
 	:ID(ID)//bgr,hsv,lab
 {	
 	//get roi out of frame set
-	Rect body_win=scaleWin(iniWin,1/TRACKING_TO_GT_RATIO);
+	Rect body_win=scaleWin(iniWin,1/TRACKING_TO_BODYSIZE_RATIO);
 	Rect roi_win(body_win.x-body_win.width,body_win.y-body_win.width,3*body_win.width,2*body_win.width+body_win.height);
 	body_win= body_win&Rect(0,0,frame_set[0].cols,frame_set[0].rows);
 	roi_win=roi_win&Rect(0,0,frame_set[0].cols,frame_set[0].rows);

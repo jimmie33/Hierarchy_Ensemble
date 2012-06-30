@@ -134,9 +134,9 @@ void HogDetector::detect(const Mat& frame)
 	cpu_hog.detectMultiScale(frame, detection, response, 0.0, Size(8,8),Size(0, 0), 1.05, 2);//-0.2
 	for (vector<Rect>::iterator it=detection.begin(); it<detection.end(); it++)
 	{
-		it->x=(int)(it->x/HOG_DETECT_WIN_RATIO);
-		it->y=(int)(it->y/HOG_DETECT_WIN_RATIO);
-		it->width=(int)(it->width/HOG_DETECT_WIN_RATIO);
-		it->height=(int)(it->height/HOG_DETECT_WIN_RATIO);
+		it->x=(int)(it->x/HOG_DETECT_FRAME_RATIO);
+		it->y=(int)(it->y/HOG_DETECT_FRAME_RATIO);
+		it->width=(int)(it->width/HOG_DETECT_FRAME_RATIO);
+		it->height=(int)(it->height/HOG_DETECT_FRAME_RATIO);
 	}
 }
