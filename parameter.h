@@ -25,7 +25,7 @@
 #ifndef _PARAMETER_
 #define _PARAMETER_
 
-#define RESULT_OUTPUT_XML_FILE "temp.xml"
+#define RESULT_OUTPUT_XML_FILE "output.xml"
 #define GT_XML_FILE "TownCentre_GT.xml"
 
 // multi-object level tracking parameter

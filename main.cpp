@@ -34,7 +34,6 @@
 #include "detector.h"
 #include "dataReader.h"
 #include "multiTrackAssociation.h"
-#include "clearMOT.h"
 #include "parameter.h"
 
 using namespace cv;
@@ -71,9 +70,6 @@ void multiTrack(int readerType,int detectorType)
 		cerr<<"fail to open pictures!"<<endl;
 		return ;
 	}
-#ifdef RECORD_VIDEO
-	VideoWriter videoWriter("result.avi",CV_FOURCC('D','I','V','X'),10,frame.size());
-#endif
 
 	Detector* detector;
 	switch (detectorType)
@@ -97,20 +93,6 @@ void multiTrack(int readerType,int detectorType)
 		mTrack.doWork(frame);
 		imshow("multiTrack", frame);
 		
-#ifdef RECORD_VIDEO
-		videoWriter<<frame;
-#endif
-		//resize(frame,frame,Size(480,360));
-#ifdef RECORD_IMAGE
-		char buff[10];
-		sprintf(buff,"%d",frameCount);
-		string s=buff;
-		s.insert(s.begin(),4-s.length(),'0');
-		string filename="TrackletsResult\\img_"+s;
-		filename=filename+".jpeg";
-		cout<<filename<<endl;
-		imwrite(filename,frame);
-#endif
 		reader->readImg(frame);
 
 		char c = waitKey(1);
@@ -127,42 +109,6 @@ void multiTrack(int readerType,int detectorType)
 
 	delete reader;
 	delete detector;
-}
-
-int calMOT(int readerType,double w_rescale_ratio=1.0,double h_rescale_ratio=1.0)
-{
-	ResultParser gt(GT_XML_FILE);
-	ResultParser hp(RESULT_OUTPUT_XML_FILE,1.0,h_rescale_ratio,w_rescale_ratio);
-	C_Mot mot;
-
-	namedWindow("multiTrack",CV_WINDOW_AUTOSIZE);
-	SeqReader* reader;
-	Mat frame;
-	switch (readerType)
-	{
-	case IMAGE:
-		reader=new ImageDataReader(_sequence_path_);
-		break;
-	case VIDEO:
-		reader=new VideoReader(_sequence_path_);
-		break;
-	default:
-		cerr<<"no such reader type!"<<endl;
-		return 0;
-	}
-	reader->readImg(frame);
-	mot.dealWith(gt.readNextFrame(),hp.readNextFrame());
-	while(!gt.isEnd() && !hp.isEnd())
-	{
-		mot.paintFrame(frame);
-		imshow("multiTrack",frame);
-		waitKey(1);
-		mot.dealWith(gt.readNextFrame(),hp.readNextFrame());
-		reader->readImg(frame);
-	}
-	mot.getMOT();
-	//getchar();
-	return 1;
 }
 
 void help()
@@ -205,7 +151,5 @@ int main(int argc,char** argv)
 	else
 		multiTrack(seq_format,HOG);
 	
-	// TODO: delete th calMOT module in the release version
-	calMOT(VIDEO,1.0,1.0);//for pets open_cv w:0.9(0.8), h:1.2(1.05); 1.0 1.3 for town;
 	return 0;
 }
