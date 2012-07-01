@@ -57,18 +57,4 @@
 #endif
 #endif
 
-//general headers
-/*
-#include <vector>
-#include <vector>
-#include <string>
-#include <map>
-#include <cstdio>
-*/
-//typedef int32_t __int32;
-//typedef int32_t __int64;
-//typedef uint32_t  __uint32;
-//typedef uint64_t  __uint64;
-
-
 #endif // OS_SPECIFIC_H
