@@ -100,7 +100,10 @@ public:
 	{
 		scale-=1;
 		Rect win=_result_history.back();//_result_history.back();
-		rectangle(frame,scaleWin(win,1/TRACKING_TO_BODYSIZE_RATIO),COLOR(_ID),2);
+		if (!getIsNovice())
+			rectangle(frame,scaleWin(win,1/TRACKING_TO_BODYSIZE_RATIO),COLOR(_ID),2);
+		else
+			rectangle(frame,scaleWin(win,1/TRACKING_TO_BODYSIZE_RATIO),COLOR(_ID),1);
 	}
 	inline void drawAssRadius(Mat& frame)
 	{

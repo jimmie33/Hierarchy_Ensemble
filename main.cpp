@@ -79,7 +79,7 @@ void read_config()
 			line_s>>HOG_DETECT_FRAME_RATIO;
 		else if (field.compare("MAX_TEMPLATE_SIZE:")==0)
 			line_s>>MAX_TEMPLATE_SIZE;
-		else if (field.compare("EXPERT_THRESH")==0)
+		else if (field.compare("EXPERT_THRESH:")==0)
 			line_s>>EXPERT_THRESH;
 		else if (field.compare("BODYSIZE_TO_DETECTION_RATIO:")==0)
 			line_s>>BODYSIZE_TO_DETECTION_RATIO;
