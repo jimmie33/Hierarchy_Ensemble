@@ -238,7 +238,6 @@ void AppTemplate::calcBP(const Mat* frame_set, Mat& occ_map,Rect ROI)//*********
 	Mat roi_mask(occ_map,roi);//occ_map: 1 for no occupancy, 0 for occupancy
 	calcBackProject(roi_set,3,channels,hist,roi_backproj,hRange);
 
-	//TODO: should be changed, occupied area should have an adaptive value
 	roi_backproj.setTo(Scalar(0.0),roi_mask);
 	confidence_map.convertTo(confidence_map,CV_32FC1);//[0,255]
 }

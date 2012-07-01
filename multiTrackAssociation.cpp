@@ -77,8 +77,7 @@ void WaitingList::feed(Rect gt_win,double response)
 		double dis=sqrt(pow(x1-x2,2.0)+pow(y1-y2,2.0))*FRAME_RATE;
 		double scale_ratio=(*it).currentWin.width/(double)gt_win.width;
 		// greedily seek near detection with similar size as the consecutive one
-		// TODO: parameterize
-		if (dis<(*it).currentWin.width*2.3 && scale_ratio<1.1 && scale_ratio>0.90)
+		if (dis<(*it).currentWin.width*2.3 && scale_ratio<1.1 && scale_ratio>0.90) // some consistancy heuristics
 		{
 			(*it).currentWin=gt_win;
 			(*it).center=Point((int)(gt_win.x+0.5*gt_win.width),(int)(gt_win.y+0.5*gt_win.height));
@@ -236,18 +235,12 @@ TrakerManager::TrakerManager(Detector* detector,Mat& frame,double thresh_promoti
 	_frame_count(0),
 	_tracker_count(0),
 	resultWriter(RESULT_OUTPUT_XML_FILE),
-	//temp
-	_tracker_perf_count(0),_expert_perf_count(0),
-	//temp
-	_controller(frame.size(),8,8,0.01,1/COUNT_NUM,thresh_promotion)//TODO
+	_controller(frame.size(),8,8,0.01,1/COUNT_NUM,thresh_promotion)
 {
 	
 }
 TrakerManager::~TrakerManager()
 {
-	//temp
-	cout<<"experts/whole: "<<_expert_perf_count<<"/"<<_tracker_perf_count<<endl;
-	//temp
 	for (list<EnsembleTracker*>::iterator i=_tracker_list.begin();i!=_tracker_list.end();i++)
 		delete *i;
 }
@@ -429,7 +422,7 @@ void TrakerManager::doWork(Mat& frame)
 	Mat frame_resize;
 	resize(frame,frame_resize,Size((int)(frame.cols*HOG_DETECT_FRAME_RATIO),(int)(frame.rows*HOG_DETECT_FRAME_RATIO)));
 	_detector->detect(frame_resize);// NOTE: the detections are resized into the normal size
-								   // TODO: parameterize.
+
 	vector<Rect> detections=_detector->getDetection();
 	vector<double> response=_detector->getResponse();
 	vector<int> det_filter;
@@ -473,11 +466,6 @@ void TrakerManager::doWork(Mat& frame)
 	//for each tracker, do tracking, tracker and template management
 	for (list<EnsembleTracker*>::iterator i=_tracker_list.begin();i!=_tracker_list.end();)
 	{	
-		//TEMP
-		_tracker_perf_count++;
-		if (!(*i)->getIsNovice())
-			_expert_perf_count++;
-		//TEMP
 		(*i)->calcConfidenceMap(_frame_set,_occupancy_map);
 		(*i)->track(_frame_set,_occupancy_map);
 		(*i)->calcScore();

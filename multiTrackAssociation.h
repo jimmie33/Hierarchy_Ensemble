@@ -165,11 +165,6 @@ private:
 	Mat _occupancy_map;	
 	XMLBBoxWriter resultWriter;
 
-	//TEMP 
-	double _expert_perf_count;
-	double _tracker_perf_count;
-	//TEMP
-
 	double _thresh_for_expert_;
 };
 	
