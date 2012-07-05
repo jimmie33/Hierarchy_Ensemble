@@ -20,15 +20,48 @@
 *
 *	If you have problems about this software, please contact: jmzhang@bu.edu
 ***************************************************************/
+/*
+USAGE:
+
+	a.
+	Hierarchy_Ensemble <path_of_sequence> <is_image> 
+	b.
+	Hierarchy_Ensemble <path_of_sequence> <is_image> <path_detection_file>
+
+	<path_of_seuqence>: the path of the directory containing images or the path of the video
+	<is_image>: '1' for image format sequence, '0' the video format sequence
+	<path_detection_file>: the xml detection file, whose structure should follow the example in 
+	the supplementary files
+
+	When <detection_file> is not specified, the program will use the HOG detector to detect 
+	pedestrians online; Otherwise, the xml file specified will be read to get the detection results in
+	it. For the exact structure of the detection file, see the example files in the supplementary files.
+
+	You may need to change the parameters stored in 'config.txt'. There are detailed explanations and 
+	recommended values in it.
+
+
+EXAMPLE:
+
+	a.
+	Hierarchy_Ensemble C:/video_data/TownCentreXVID.avi 0
+	(The program will use the OpenCV's HOG detector)
+	b.
+	Hierarchy_Ensemble C:/video_data/PETS09S2L1/ 1 C:/PETS09_S2L1_det_opencv.xml
+	(The program will read the images stored in the directory and use the detection xml file as the 
+	source of detections)
+
+
+NOTE:
+
+	(*) When the program is running, type 'p' to pause and 'q' to quit.
+	(**) The tracking result will be recorded in a file named "output.xml".
+*/
 
 #include <ctime>
 #include <iostream>
 #include <sstream>
 #include <fstream>
-
-#include "libxml/parser.h"
-#include "libxml/tree.h"
-#include "libxml/xmlmemory.h"
 
 #include "tracker.h"
 #include "detector.h"
@@ -42,7 +75,7 @@ using namespace std;
 static string _sequence_path_;
 static string _detection_xml_file_;
 
-//Configuration by default
+//Configuration
 int MAX_TRACKER_NUM;
 int MAX_TEMPLATE_SIZE;
 int EXPERT_THRESH;

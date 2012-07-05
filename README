@@ -23,5 +23,51 @@
 
 1. How to Compile
 
+	Platform: Windows
+	Prerequisite libraries: iconv, libxml2, opencv 2.3+
+
+	a. Create a blank console application project named "Hierarchy_Ensemble" in MS Visual Studio.
+	b. Add the souce code files in the project.
+	c. Add relevant directories in the project configuration (bin, include, lib).
+	d. Add dependent library files in the project configuration (for OpenCV and libxml)
+	d. Build it.
+
+	Although the code has only been tested on Windows, it should be easy to be adapted for Linux. 
+	The only flatform dependent module is the 'dataReader', where the 'ImageDataReader' 
+	reads the list of file names contained in the specified directory. 
+
 
 2. How to Use
+
+	USAGE:
+
+	a.
+	Hierarchy_Ensemble <path_of_sequence> <is_image> 
+	b.
+	Hierarchy_Ensemble <path_of_sequence> <is_image> <detection_file>
+
+	<path_of_seuqence>: the path of the directory containing images or the path of the video
+	<is_image>: '1' for image format sequence, '0' the video format sequence
+	<detection_file>: the xml detection file, whose structure should follow the example in 
+	the supplementary files
+
+	When <detection_file> is not specified, the program will use the HOG detector to detect 
+	pedestrians online; Otherwise, the xml file specified will be read to get the detection results in
+	it. For the exact structure of the detection file, see the example files in the supplementary files.
+
+
+	EXAMPLE:
+
+	a.
+	Hierarchy_Ensemble C:/video_data/TownCentreXVID.avi 0
+	(The program will use the OpenCV's HOG detector)
+	b.
+	Hierarchy_Ensemble C:/video_data/PETS09S2L1/ 1 PETS09_S2L1_det_opencv.xml
+	(The program will read the images stored in the directory and use the detection xml file as the 
+	source of detections)
+
+
+	NOTE:
+
+	(*) When the program is running, type 'p' to pause and 'q' to quit.
+	(**) The tracking result will be recorded in a file named "output.xml".
