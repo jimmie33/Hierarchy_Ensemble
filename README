@@ -27,11 +27,10 @@
 Platform: Windows
 Prerequisite libraries: iconv, libxml2, opencv 2.3+
 
-a. Create a blank console application project named "Hierarchy_Ensemble" in MS Visual Studio.
-b. Add the souce code files in the project.
-c. Add relevant directories in the project configuration (bin, include, lib).
-d. Add dependent library files in the project configuration (for OpenCV and libxml)
-d. Build it.
+a. Install all the dependencies specified above.
+b. Put this source code in your local directory.
+c. Use CMake to generate a project file or a make file. You may need to input the paths for the required libraries.
+d. Build the generated project file.
 
 Although the code has only been tested on Windows, it should be easy to be adapted for Linux. The only flatform dependent module is the 'dataReader', where the 'ImageDataReader' reads the list of file names contained in the specified directory. 
 
