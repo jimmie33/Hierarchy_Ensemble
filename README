@@ -48,6 +48,8 @@ Hierarchy_Ensemble <path_of_sequence> <is_image> <detection_file>
 <is_image>: '1' for image format sequence, '0' the video format sequence
 <detection_file>: the xml detection file, whose structure should follow the example in the supplementary files
 
+Before running the program, you may need to change the parameters stored in 'config.txt'. There are detailed explanations and recommended values in it.
+
 When <detection_file> is not specified, the program will use the HOG detector to detect pedestrians online; Otherwise, the xml file specified will be read to get the detection results in it. For the exact structure of the detection file, see the example files in the supplementary files.
 
 

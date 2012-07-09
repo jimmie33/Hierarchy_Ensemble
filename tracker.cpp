@@ -2,7 +2,6 @@
 *	Implemetation of the multi-person tracking system described in paper
 *	"Online Multi-person Tracking by Tracker Hierarchy", Jianming Zhang, 
 *	Liliana Lo Presti, Stan Sclaroff, AVSS 2012
-*	http://www.cs.bu.edu/groups/ivc/html/paper_view.php?id=268
 *
 *	Copyright (C) 2012 Jianming Zhang
 *
@@ -23,9 +22,6 @@
 ***************************************************************/
 
 #include "tracker.h"
-
-#define SCALE_UPDATE_RATE 0.4
-#define HIST_MATCH_UPDATE 0.01
 
 list<EnsembleTracker*> EnsembleTracker::_TRASH_LIST;
 void EnsembleTracker::dump()
@@ -87,7 +83,7 @@ EnsembleTracker::EnsembleTracker(int id,Size body_size,double phi1,double phi2,d
 	}
 
 	//for calculating hitting rate in a time window
-	_recentHitRecord=Mat::zeros(2,4*FRAME_RATE,CV_64FC1);
+	_recentHitRecord=Mat::zeros(2,4*_FRAME_RATE,CV_64FC1);
 }
 EnsembleTracker::~EnsembleTracker()
 {
@@ -188,7 +184,7 @@ void EnsembleTracker::addAppTemplate(const Mat* frame_set,Rect iniWin)
 	{
 		_result_temp=iniWin;
 		_result_last_no_sus=iniWin;
-		_result_bodysize_temp=scaleWin(iniWin,1/TRACKING_TO_BODYSIZE_RATIO);
+		_result_bodysize_temp=scaleWin(iniWin,1/TRACKING_TO_GT_RATIO);
 		_retained_template=new AppTemplate(*tra_template);
 	}
 	_template_count++;
@@ -198,8 +194,8 @@ void EnsembleTracker::calcConfidenceMap(const Mat* frame_set,Mat& occ_map)//****
 	// use the kalman filter prediction to locate the roi of confidence map (backprojection map)
 	_kf.predict();
 	Point center((int)_kf.statePre.at<float>(0,0),(int)_kf.statePre.at<float>(1,0));
-	double w=_window_size.width/TRACKING_TO_BODYSIZE_RATIO;
-	double h=_window_size.height/TRACKING_TO_BODYSIZE_RATIO; 
+	double w=_window_size.width/TRACKING_TO_GT_RATIO;
+	double h=_window_size.height/TRACKING_TO_GT_RATIO; 
 	h+=2*w;
 	w+=2*w;
 
@@ -274,7 +270,7 @@ void EnsembleTracker::track(const Mat* frame_set,Mat& occ_map)
 
 	// locate the result window in the picture and update the body-size window too 
 	_result_temp=iniWin+Point(_cm_win.x,_cm_win.y);
-	_result_bodysize_temp=scaleWin(_result_temp,1/TRACKING_TO_BODYSIZE_RATIO);
+	_result_bodysize_temp=scaleWin(_result_temp,1/TRACKING_TO_GT_RATIO);
 
 	if (getIsNovice())
 	{
@@ -294,7 +290,7 @@ void EnsembleTracker::track(const Mat* frame_set,Mat& occ_map)
 void EnsembleTracker::calcScore()
 {
 	Rect roi_result=_result_temp-Point(_cm_win.x,_cm_win.y);
-	Rect roi_bodysize=scaleWin(roi_result,1/TRACKING_TO_BODYSIZE_RATIO);
+	Rect roi_bodysize=scaleWin(roi_result,1/TRACKING_TO_GT_RATIO);
 
 	if (getIsNovice())
 		return;
@@ -358,7 +354,7 @@ void EnsembleTracker::promote()
 void EnsembleTracker::updateMatchHist(Mat& frame)
 {
 	Rect roi_result=getResult();
-	Rect roi_result_bodysize=scaleWin(roi_result,1/TRACKING_TO_BODYSIZE_RATIO);
+	Rect roi_result_bodysize=scaleWin(roi_result,1/TRACKING_TO_GT_RATIO);
 	Rect win=roi_result_bodysize&Rect(0,0,frame.cols,frame.rows);
 	Mat roi(frame,win);
 	Mat temp;
