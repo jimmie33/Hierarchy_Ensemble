@@ -26,7 +26,8 @@
 #ifndef UTIL_
 #define  UTIL_
 
-#include "opencv2/opencv.hpp"
+#include <opencv2/opencv.hpp>
+#include <stdio>
 
 using namespace cv;
 using namespace std;
@@ -90,7 +91,7 @@ inline double getRectDist(Rect r1,Rect r2,int type)
 inline int string2int(const char* s)
 {
 	int i;
-	if(sscanf_s(s, "%d", &i) == EOF )
+	if(sscanf(s, "%d", &i) == EOF )
 	{
 		cout<<"error reading integer"<<endl;
 	}
