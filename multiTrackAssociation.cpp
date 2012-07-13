@@ -536,7 +536,7 @@ void TrakerManager::doWork(Mat& frame)
 				Rect win=(*i)->getResultHistory().back();
 				Point tx(win.x,win.y-1);
 				char buff[10];
-				sprintf_s(buff,"%d",(*i)->getID());
+				sprintf(buff,"%d",(*i)->getID());
 				string s=buff;
 				putText(frame,s,tx,FONT_HERSHEY_PLAIN ,1.5,COLOR((*i)->getID()),2);
 
@@ -561,7 +561,7 @@ void TrakerManager::doWork(Mat& frame)
 	if (_my_char=='g')
 	{
 		char buff[20];
-		sprintf_s(buff,"%d.jpg",_frame_count);
+		sprintf(buff,"%d.jpg",_frame_count);
 		string filename=buff;
 		imwrite(filename,frame);
 		_my_char=0;
