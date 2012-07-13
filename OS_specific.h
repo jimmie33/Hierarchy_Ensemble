@@ -29,7 +29,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 //#include <stdint.h>
-#include <QtCore.h>
+//#include <QtCore>
 
 //typedef int32_t __int32;
 //typedef int32_t __int64;
