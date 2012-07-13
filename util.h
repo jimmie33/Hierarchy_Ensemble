@@ -91,7 +91,7 @@ inline double getRectDist(Rect r1,Rect r2,int type)
 inline int string2int(const char* s)
 {
 	int i;
-	if(sscanf_s(s, "%d", &i) == EOF )
+	if(sscanf(s, "%d", &i) == EOF )
 	{
 		cout<<"error reading integer"<<endl;
 	}
