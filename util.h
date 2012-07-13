@@ -27,7 +27,7 @@
 #define  UTIL_
 
 #include <opencv2/opencv.hpp>
-#include <stdio>
+#include <stdio.h>
 
 using namespace cv;
 using namespace std;
