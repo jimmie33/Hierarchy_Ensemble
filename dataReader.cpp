@@ -47,23 +47,17 @@ ImageDataReader::ImageDataReader(const string dir):_directory(dir),_file_counter
 #if OS_type==1 // for linux
 	
 	cout<<"TODO(dataReader.cpp): data reader for linux platform."<<endl;
-	
-	//directory
-	QDir dir(_directory.c_str());
-
-	//filters for names to open (imahe types)
-	QStringList name_filters;
-	name_filters << "*.jpeg" << "*.jpg" << "*.png" << "*.bmp";    
-
-	//extract filenames
-	QStringList filenames = dir.entryList(name_filters, QDir::Files, QDir::Name);
-
-	//m_numFiles = filenames.size();
-
-	for (int i = 0 ; i < filenames.size(); ++i)
-	{
-		_m_fileNames.push_back(filenames[i].toStdString());
+	DIR *dp;
+	struct dirent *dirp;
+	if((dp = opendir(dir.c_str())) == NULL) {
+		cout << "Error(" << errno << ") opening " << dir << endl;
+		return errno;
 	}
+
+	while ((dirp = readdir(dp)) != NULL) {
+		_m_fileNames.push_back(string(dirp->d_name));
+	}
+	closedir(dp);
 #endif
 }
 void ImageDataReader::readImg(Mat& frame)

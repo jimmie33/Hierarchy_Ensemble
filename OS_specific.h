@@ -28,8 +28,11 @@
 #if OS_type==1
 #include <sys/time.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <dirent.h>
 //#include <stdint.h>
-#include <QtCore.h>
+//#include <QtCore.h>
+
 
 //typedef int32_t __int32;
 //typedef int32_t __int64;
