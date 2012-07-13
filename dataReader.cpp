@@ -51,7 +51,6 @@ ImageDataReader::ImageDataReader(const string dir):_directory(dir),_file_counter
 	struct dirent *dirp;
 	if((dp = opendir(dir.c_str())) == NULL) {
 		cout << "Error opening " << dir << endl;
-		return errno;
 	}
 
 	while ((dirp = readdir(dp)) != NULL) {
