@@ -123,8 +123,8 @@ private:
 	int _grid_rows;
 	int _grid_cols;
 	double _prior_height_variance;
-	vector<vector<double>> _bodyheight_map;
-	vector<vector<double>> _bodyheight_map_count;
+	vector<vector<double> > _bodyheight_map;
+	vector<vector<double> > _bodyheight_map_count;
 	double _bodyheight_learning_rate;
 
 	HittingRecord _hit_record;
