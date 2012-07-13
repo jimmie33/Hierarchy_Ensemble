@@ -53,9 +53,12 @@ ImageDataReader::ImageDataReader(const string dir):_directory(dir),_file_counter
 		cout << "Error opening " << dir << endl;
 	}
 
+	readdir(dp);//.
+	readdir(dp);//..
 	while ((dirp = readdir(dp)) != NULL) {
 		_m_fileNames.push_back(string(dirp->d_name));
 	}
+	std::sort(_m_fileNames.begin(),_m_fileNames.end())
 	closedir(dp);
 #endif
 }
