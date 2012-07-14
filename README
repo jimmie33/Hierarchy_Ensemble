@@ -29,8 +29,8 @@ This software is an online multi-person tracking system. Its features are listed
 a. It does not require calibration information.
 b. It uses single camera.
 c. It does not adopt any sliding window techniques or batch processing, i.e, it dose not look into the future.
-d. Given detections, it can process about 7 fps of an low-density 700X600 video on a modern machine.
-e. It works with the generic HOG detector in OpenCV.
+d. Given detections, it can process about 7 fps of a 700X600 video on a modern machine.
+e. It can work with the generic HOG detector in OpenCV.
 
 Currently, it should work well with mid or low-density scenes captrured by a narrow angle camera at a high position from ground, which gives less perspective distortion (like the Town Center data set). For cameras put at a low position, this system may give poorer performance due to the lack of calibration information and severe occlusion in the scenes. 
 
