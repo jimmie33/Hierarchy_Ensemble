@@ -190,6 +190,9 @@ void Controller::takeVoteForAvgHittingRate(list<EnsembleTracker*> _tracker_list)
 }
 void Controller::deleteObsoleteTracker(list<EnsembleTracker*>& _tracker_list)
 {
+	/*
+	Tracker death control. For modifying termination conditions, change here.
+	*/
 	waitList_suspicious.update();
 	double l=_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate);
 	for (list<EnsembleTracker*>::iterator it=_tracker_list.begin();it!=_tracker_list.end();)
