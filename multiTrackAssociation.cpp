@@ -548,7 +548,7 @@ void TrakerManager::doWork(Mat& frame)
 			}				
 		}
 		// draw matching radius
-		(*i)->drawAssRadius(frame);
+		//(*i)->drawAssRadius(frame);
 	}
 
 	// sort trackers based on number of templates

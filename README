@@ -37,15 +37,14 @@ Currently, it should work well with mid or low-density scenes captrured by a nar
 
 1. How to Compile
 
-Platform: Windows
+Platform: Windows, Linux
 Prerequisite libraries: iconv, libxml2, opencv 2.3+
 
 a. Install all the dependencies specified above.
 b. Put this source code in your local directory.
-c. Use CMake to generate a project file or a make file. You may need to input the paths for the required libraries.
-d. Build the generated project file.
-
-Although the code has only been tested on Windows, it should be easy to be adapted for Linux. The only flatform dependent module is the 'dataReader', where the 'ImageDataReader' reads the list of file names contained in the specified directory. 
+c. Use CMake to generate a project file or a make file. You may need to input the paths for the required libraries. (For the use of CMake, please check online resources.)
+d. Build the generated project file or make file.
+e. Don't forget to put the config.txt together with the executable.
 
 
 2. How to Use
