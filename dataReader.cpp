@@ -56,6 +56,16 @@ ImageDataReader::ImageDataReader(const string dir):_directory(dir),_file_counter
 	readdir(dp);//.
 	readdir(dp);//..
 	while ((dirp = readdir(dp)) != NULL) {
+		string filename(dirp->d_name);
+		while (
+			filename.find(".jpg")==string::npos &&
+			filename.find(".jpeg")==string::npos &&
+			filename.find(".png")==string::npos &&
+			filename.find(".bmp")==string::npos
+			)
+			dirp=readdir(dp);
+		if (dirp==NULL)
+			break;
 		_m_fileNames.push_back(string(dirp->d_name));
 	}
 	std::sort(_m_fileNames.begin(),_m_fileNames.end());
