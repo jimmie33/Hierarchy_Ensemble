@@ -64,6 +64,7 @@ EnsembleTracker::EnsembleTracker(int id,Size body_size,double phi1,double phi2,d
 	_ID(id),
 	_kf(4,2,0),
 	_is_novice(false),
+	_match_radius(0),
 	hist_match_score(0),
 	_added_new(true),
 	_record_idx(0)
