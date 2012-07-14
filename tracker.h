@@ -109,7 +109,7 @@ public:
 	inline void drawAssRadius(Mat& frame)
 	{
 		Rect win=_result_temp;
-		circle(frame,Point((int)(win.x+0.5*win.width),(int)(win.y+0.5*win.height)),(int)_match_radius,COLOR(_ID),1);
+		circle(frame,Point((int)(win.x+0.5*win.width),(int)(win.y+0.5*win.height)),(int)MAX(_match_radius,0),COLOR(_ID),1);
 	}
 
 	//getting function
