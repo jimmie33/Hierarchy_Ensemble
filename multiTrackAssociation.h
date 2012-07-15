@@ -85,10 +85,18 @@ public:
 	void takeVoteForHeight(Rect bodysize_win);	
 	vector<int> filterDetection(vector<Rect> detction_bodysize);	
 	void takeVoteForAvgHittingRate(list<EnsembleTracker*> _tracker_list);	
+
+	/*
+	Tracker death control. For modifying termination conditions, change here.
+	*/
 	void deleteObsoleteTracker(list<EnsembleTracker*>& _tracker_list);	
+	
 	void calcSuspiciousArea(list<EnsembleTracker*>& _tracker_list);	
 	inline vector<Rect> getQualifiedCandidates()
 	{
+		/*
+		For modifying the birth condition for trackers, change here.
+		*/
 		double l=_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate);
 		return waitList.outputQualified((l-sqrt(l)-1.0));		
 	}

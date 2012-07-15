@@ -46,7 +46,6 @@ ImageDataReader::ImageDataReader(const string dir):_directory(dir),_file_counter
 
 #if OS_type==1 // for linux
 	
-	cout<<"TODO(dataReader.cpp): data reader for linux platform."<<endl;
 	DIR *dp;
 	struct dirent *dirp;
 	if((dp = opendir(dir.c_str())) == NULL) {
