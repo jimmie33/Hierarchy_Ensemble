@@ -142,13 +142,13 @@ private:
 	vector<Rect> _suspicious_rect_list;
 };
 
-class TrakerManager
+class TrackerManager
 {
 public:
-	TrakerManager(
-		Detector* detctor,Mat& frame,
+	TrackerManager(
+		Detector* detctor,Size frame_size,
 		double thresh_promotion);
-	~TrakerManager();	
+	~TrackerManager();	
 	void doWork(Mat& frame);
 
 	void setKey(char c)

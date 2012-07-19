@@ -233,22 +233,22 @@ void Controller::calcSuspiciousArea(list<EnsembleTracker*>& _tracker_list)
 }
 
 /************************************************************************/
-TrakerManager::TrakerManager(Detector* detector,Mat& frame,double thresh_promotion)
+TrackerManager::TrackerManager(Detector* detector,Size frame_size,double thresh_promotion)
 	:_detector(detector),
 	_my_char(0),
 	_frame_count(0),
 	_tracker_count(0),
 	resultWriter(RESULT_OUTPUT_XML_FILE),
-	_controller(frame.size(),8,8,0.01,1/COUNT_NUM,thresh_promotion)
+	_controller(frame_size,8,8,0.01,1/COUNT_NUM,thresh_promotion)
 {
 	
 }
-TrakerManager::~TrakerManager()
+TrackerManager::~TrackerManager()
 {
 	for (list<EnsembleTracker*>::iterator i=_tracker_list.begin();i!=_tracker_list.end();i++)
 		delete *i;
 }
-void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
+void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 {
 	_controller.waitList.update();
 
@@ -412,7 +412,7 @@ void TrakerManager::doHungarianAlg(const vector<Rect>& detections)
 			_controller.waitList.feed(scaleWin(detection_left[i],BODYSIZE_TO_DETECTION_RATIO),1.0);
 	}
 }
-void TrakerManager::doWork(Mat& frame)
+void TrackerManager::doWork(Mat& frame)
 {
 	Mat bgr,hsv,lab;
 	frame.copyTo(bgr);
@@ -555,7 +555,7 @@ void TrakerManager::doWork(Mat& frame)
 	}
 
 	// sort trackers based on number of templates
-	_tracker_list.sort(TrakerManager::compareTraGroup);
+	_tracker_list.sort(TrackerManager::compareTraGroup);
 
 	// record results to xml file
 	resultWriter.putNextFrameResult(output);

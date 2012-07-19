@@ -161,7 +161,7 @@ void multiTrack(int readerType,int detectorType)
 		break;
 	}
 
-	TrakerManager mTrack(detector,frame,EXPERT_THRESH);
+	TrackerManager mTrack(detector,frame.size(),EXPERT_THRESH);
 	
 	for (int frameCount=0;frame.data!=NULL;frameCount++)
 	{
