@@ -239,9 +239,9 @@ int main(int argc,char** argv)
 	else 
 		seq_format=VIDEO;
 	
-	if (argc>3)
+	if (argc>4)
 	{
-		_detection_xml_file_=string(argv[3]);
+		_detection_xml_file_=string(argv[4]);
 		multiTrack(seq_format,TXT);
 	}
 	else

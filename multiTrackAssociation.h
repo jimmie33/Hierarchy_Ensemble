@@ -27,6 +27,7 @@
 #define MULTI_TRACK_ASSOCIATION
 
 #include <fstream>
+#include <cstdio>
 
 #include "opencv2/opencv.hpp"
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <cstdio>
 
 #include "OS_specific.h"
 
@@ -29,8 +30,8 @@ public:
 #if OS_type==1 //for linux
 		DIR *dp;
 		struct dirent *dirp;
-		if((dp = opendir(directory.c_str())) == NULL) {
-			cout << "Error opening " << dir << endl;
+		if((dp = opendir(directory)) == NULL) {
+			cout << "Error opening " << directory << endl;
 		}
 
 		readdir(dp);//.

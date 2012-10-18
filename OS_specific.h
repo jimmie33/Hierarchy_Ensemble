@@ -47,6 +47,8 @@
 
 #elif OS_type==2
 #include <windows.h>
+#undef min
+#undef max
 //#include <shlobj.h>
 //#include "stdint.h"
 

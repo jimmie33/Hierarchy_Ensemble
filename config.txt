@@ -2,7 +2,7 @@
 FRAME_RATE: 30
 
 # The size of the temporal sliding window (number of frames) for some statistic estimations (The higher it is, the longer time it will take to initialize and terminate trackers. Recommended value is 7-11)
-TIME_WINDOW_SIZE: 11
+TIME_WINDOW_SIZE: 20
 
 # Some detectors' performance (HOG detector for example) will be influence by the resolution and size of the frame. This parameter will rescale the frame for the detector, but it won't affect the tracking.
 HOG_DETECT_FRAME_RATIO: 1.0

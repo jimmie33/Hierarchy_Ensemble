@@ -141,7 +141,7 @@ AppTemplate::AppTemplate(const Mat* frame_set, const Rect iniWin,int ID)
 	calcBackProject(roi_set,3,channels,temp_hist,final_mask,hRange);
 	threshold(final_mask,final_mask,5,255,CV_THRESH_BINARY_INV);
 	          
-	final_mask=min(final_mask,mask_roi);
+	final_mask=cv::min(final_mask,mask_roi);
 
 	//choose the best two feature space for foreground****************
 	Mat hist_fore,hist_back;

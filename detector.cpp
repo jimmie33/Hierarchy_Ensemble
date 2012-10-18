@@ -151,7 +151,7 @@ TxtDetector::TxtDetector(const char* filename)
 	if (!_file_p.is_open())
 	{
 		cerr<<"cannot open file: "<<filename<<endl;
-		return;
+		exit(1);
 	}
 	if (!_file_p.eof())
 	{
@@ -176,9 +176,10 @@ void TxtDetector::detect(const Mat& frame)
 		{
 			istringstream ss(_buff);
 			int frame_id;
-			float x1,y1,x2,y2;
-			ss>>frame_id>>x1>>y1>>x2>>y2;
-			detection.push_back(scaleWin(Rect(x1,y1,x2-x1+1,y2-y1+1),1.2,1.0));
+			float x1,y1,x2,y2,score;
+			ss>>frame_id>>x1>>y1>>x2>>y2>>score;
+			if (score>0)
+				detection.push_back(scaleWin(Rect(x1,y1,x2-x1+1,y2-y1+1),1.2,1.0));
 		}
 
 		if (!_file_p.eof())
