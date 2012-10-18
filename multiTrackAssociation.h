@@ -152,7 +152,7 @@ class TrackerManager
 public:
 	TrackerManager(
 		Detector* detctor,Size frame_size,
-		double thresh_promotion);
+		double thresh_promotion, const  string output_file="output.txt");
 	~TrackerManager();	
 	void doWork(Mat& frame);
 	void drawStatistics(Mat& frame, Point p1, Point p2)
@@ -200,7 +200,7 @@ private:
 	int _frame_count;
 	
 	Mat _occupancy_map;	
-	XMLBBoxWriter resultWriter;
+	TXTBBoxWriter resultWriter;
 
 	double _thresh_for_expert_;
 };

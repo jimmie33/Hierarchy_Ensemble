@@ -28,6 +28,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 
 #include "libxml/parser.h"
 #include "libxml/tree.h"
@@ -133,6 +134,20 @@ private:
 	xmlChar *tmp;
 	bool open_success;
 	int frameCount;
+};
+class TXTBBoxWriter: public BBoxWriter
+{
+public:
+	TXTBBoxWriter(const char* filename);
+	~TXTBBoxWriter()
+	{
+		_writer.close();
+	}
+	virtual bool putNextFrameResult(vector<Result2D>& result);
+
+private:
+	ofstream _writer;
+	int _frame_count;
 };
 
 

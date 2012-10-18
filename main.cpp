@@ -69,12 +69,14 @@ NOTE:
 #include "dataReader.h"
 #include "multiTrackAssociation.h"
 #include "parameter.h"
+#include "fileGettor.h"
 
 using namespace cv;
 using namespace std;
 
 static string _sequence_path_;
 static string _detection_xml_file_;
+static string _out_dir_;
 
 #define RECORD_VIDEO
 
@@ -166,16 +168,18 @@ void multiTrack(int readerType,int detectorType)
 		break;
 	}
 
-	TrackerManager mTrack(detector,frame.size(),EXPERT_THRESH);
+	string filename=getFileName(_sequence_path_);
+
+	TrackerManager mTrack(detector,frame.size(),EXPERT_THRESH,_out_dir_+rmExtension(filename)+"_output.txt");
 #ifdef RECORD_VIDEO
-	VideoWriter videoWriter("demo.avi",CV_FOURCC('D','I','V','X'),7,frame.size());
+	VideoWriter videoWriter(_out_dir_+rmExtension(filename)+"_output.avi",CV_FOURCC('D','I','V','X'),30,frame.size());
 	if (!videoWriter.isOpened())
 		cerr<<"fail to initialize video writer."<<endl;
 #endif
 	for (int frameCount=0;frame.data!=NULL;frameCount++)
 	{
 		mTrack.doWork(frame);
-		mTrack.drawStatistics(frame,Point(10,10),Point(150,30));
+		//mTrack.drawStatistics(frame,Point(10,10),Point(150,30));
 		imshow("multiTrack", frame);
 		
 #ifdef RECORD_VIDEO
@@ -218,7 +222,7 @@ void help()
 
 int main(int argc,char** argv)
 {
-	if (argc !=3 && argc !=4)
+	if (argc !=4 && argc !=5)
 	{
 		help();
 		exit(1);
@@ -227,6 +231,7 @@ int main(int argc,char** argv)
 	read_config();
 
 	_sequence_path_=string(argv[1]);
+	_out_dir_=string(argv[3]);
 	int seq_format;
 	
 	if (atof(argv[2])==1.0)

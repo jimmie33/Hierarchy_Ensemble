@@ -198,7 +198,7 @@ void Controller::deleteObsoleteTracker(list<EnsembleTracker*>& _tracker_list)
 	for (list<EnsembleTracker*>::iterator it=_tracker_list.begin();it!=_tracker_list.end();)
 	{	
 		if(
-			(*it)->getHitFreq()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0) &&
+			(*it)->getHitFreq()*TIME_WINDOW_SIZE<=0/*MAX(l-2*sqrt(l),0)*/ &&
 			(*it)->getHitFreqS()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0) 
 			)
 		{
@@ -236,13 +236,13 @@ void Controller::calcSuspiciousArea(list<EnsembleTracker*>& _tracker_list)
 }
 
 /************************************************************************/
-TrackerManager::TrackerManager(Detector* detector,Size frame_size,double thresh_promotion)
+TrackerManager::TrackerManager(Detector* detector,Size frame_size,double thresh_promotion, const string output_file)
 	:_detector(detector),
 	_my_char(0),
 	_frame_count(0),
 	_tracker_count(0),
-	resultWriter(RESULT_OUTPUT_XML_FILE),
-	_controller(frame_size,8,8,0.01,1/COUNT_NUM,thresh_promotion)
+	resultWriter(output_file.c_str()),
+	_controller(frame_size,8,8,0.01,1/COUNT_NUM,thresh_promotion)//size of 8X8 is recommended for large area
 {
 	
 }
@@ -458,7 +458,7 @@ void TrackerManager::doWork(Mat& frame)
 	_controller.takeVoteForAvgHittingRate(_tracker_list); // calculate the average hitting rate
 	_controller.getQualifiedCandidates();
 	_controller.deleteObsoleteTracker(_tracker_list);
-	_controller.calcSuspiciousArea(_tracker_list);
+	//_controller.calcSuspiciousArea(_tracker_list);
 	
 
 	// draw detections

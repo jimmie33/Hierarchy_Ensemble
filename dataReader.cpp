@@ -218,3 +218,20 @@ bool XMLBBoxWriter::putNextFrameResult(vector<Result2D>& result)
 	frameCount++;
 	return true;
 }
+
+TXTBBoxWriter::TXTBBoxWriter(const char* filename)
+	:_writer(filename), _frame_count(0)
+{
+
+}
+
+bool TXTBBoxWriter::putNextFrameResult(vector<Result2D>& result)
+{
+	for (int i=0;i<result.size();i++)
+	{
+		Result2D r=result[i];
+		_writer<<_frame_count<<" "<<r.xc<<" "<<r.yc<<" "<<r.w<<" "<<r.h<<endl;
+	}
+	_frame_count++;
+	return true;
+}
