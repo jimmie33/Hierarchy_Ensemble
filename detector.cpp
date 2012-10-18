@@ -24,6 +24,7 @@
 
 
 #include "detector.h"
+#include <sstream>
 
 void Detector::draw(Mat& frame)
 {
@@ -140,4 +141,57 @@ void HogDetector::detect(const Mat& frame)
 		it->width=(int)(it->width/HOG_DETECT_FRAME_RATIO);
 		it->height=(int)(it->height/HOG_DETECT_FRAME_RATIO);
 	}
+}
+
+/* ****** ****** */
+
+TxtDetector::TxtDetector(const char* filename)
+	:_file_p(filename),_count(0),_reader_pos(-1),_is_eof(false),Detector(TXT)
+{
+	if (!_file_p.is_open())
+	{
+		cerr<<"cannot open file: "<<filename<<endl;
+		return;
+	}
+	if (!_file_p.eof())
+	{
+		char buff[255];
+		_file_p.getline(buff,255);
+		_buff=string(buff);
+		istringstream ss(_buff);
+		ss>>_reader_pos;
+	}
+	else
+		_is_eof=true;
+}
+
+void TxtDetector::detect(const Mat& frame)
+{
+	detection.clear();
+
+	while (!_is_eof && _reader_pos<=_count)
+	{
+		// deal with buffer
+		if (_reader_pos==_count && _buff.length()!=0)
+		{
+			istringstream ss(_buff);
+			int frame_id;
+			float x1,y1,x2,y2;
+			ss>>frame_id>>x1>>y1>>x2>>y2;
+			detection.push_back(scaleWin(Rect(x1,y1,x2-x1+1,y2-y1+1),1.2,1.0));
+		}
+
+		if (!_file_p.eof())
+		{
+			char buff[255];
+			_file_p.getline(buff,255);
+			_buff=string(buff);
+			istringstream ss(_buff);
+			ss>>_reader_pos;
+		}
+		else
+			_is_eof=true;
+	}
+
+	_count++;
 }

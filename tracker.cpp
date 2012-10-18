@@ -67,7 +67,8 @@ EnsembleTracker::EnsembleTracker(int id,Size body_size,double phi1,double phi2,d
 	_match_radius(0),
 	hist_match_score(0),
 	_added_new(true),
-	_record_idx(0)
+	_record_idx(0),
+	_record_idx_s(0)
 	//tracking_count(1)
 {
 	_retained_template=0;
@@ -89,6 +90,7 @@ EnsembleTracker::EnsembleTracker(int id,Size body_size,double phi1,double phi2,d
 
 	//for calculating hitting rate in a time window
 	_recentHitRecord=Mat::zeros(2,4*FRAME_RATE,CV_64FC1);
+	_recentHitRecord_s=Mat::zeros(2,FRAME_RATE,CV_64FC1);
 }
 EnsembleTracker::~EnsembleTracker()
 {
@@ -172,6 +174,8 @@ void EnsembleTracker::addAppTemplate(const Mat* frame_set,Rect iniWin)
 	setAddNew(true);// set the flag
 	_recentHitRecord.at<double>(0,_record_idx)=1;
 	_recentHitRecord.at<double>(1,_record_idx)=1.0;
+	_recentHitRecord_s.at<double>(0,_record_idx_s)=1.0;
+	_recentHitRecord_s.at<double>(1,_record_idx_s)=1.0;
 	
 	//generate new appearance template and add to list
 	AppTemplate* tra_template=new AppTemplate(frame_set,iniWin,_template_count);
@@ -247,9 +251,12 @@ void EnsembleTracker::track(const Mat* frame_set,Mat& occ_map)
 	updateKfCov(getBodysizeResult().width);
 
 	//for calculation of hitting rate
-	_record_idx=(_record_idx+1)-_recentHitRecord.cols*((_record_idx+1)/_recentHitRecord.cols);
+	_record_idx=(_record_idx+1)%_recentHitRecord.cols;
+	_record_idx_s=(_record_idx_s+1)%_recentHitRecord_s.cols;
 	_recentHitRecord.at<double>(0,_record_idx)=0.0;
 	_recentHitRecord.at<double>(1,_record_idx)=0.0;
+	_recentHitRecord_s.at<double>(0,_record_idx_s)=0.0;
+	_recentHitRecord_s.at<double>(1,_record_idx_s)=0.0;
 
 	// reset the flag, it will be set as true if a new detection is matched
 	setAddNew(false);

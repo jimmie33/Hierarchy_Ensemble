@@ -82,7 +82,7 @@ void WaitingList::feed(Rect gt_win,double response)
 		{
 			(*it).currentWin=gt_win;
 			(*it).center=Point((int)(gt_win.x+0.5*gt_win.width),(int)(gt_win.y+0.5*gt_win.height));
-			(*it).accu++;//could be more than 3
+			(*it).accu++;
 			return;
 		}
 	}
@@ -197,7 +197,10 @@ void Controller::deleteObsoleteTracker(list<EnsembleTracker*>& _tracker_list)
 	double l=_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate);
 	for (list<EnsembleTracker*>::iterator it=_tracker_list.begin();it!=_tracker_list.end();)
 	{	
-		if((*it)->getHitFreq()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0))
+		if(
+			(*it)->getHitFreq()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0) &&
+			(*it)->getHitFreqS()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0) 
+			)
 		{
 			(*it)->refcDec1();
 			(*it)->dump();
@@ -520,6 +523,9 @@ void TrackerManager::doWork(Mat& frame)
 		}			
 	}
 
+
+	_num_expert=0;
+	_num_novice=0;
 	// register results and draw
 	vector<Result2D> output;
 	for (list<EnsembleTracker*>::iterator i=_tracker_list.begin();i!=_tracker_list.end();i++)
@@ -534,7 +540,12 @@ void TrackerManager::doWork(Mat& frame)
 			//(*i)->drawResult(frame);
 			if (!(*i)->getIsNovice() || ((*i)->getIsNovice() && (*i)->compareHisto(bgr,(*i)->getBodysizeResult())>HIST_MATCH_THRESH_CONT))//***************
 			{
-				(*i)->drawResult(frame,1/TRACKING_TO_BODYSIZE_RATIO);
+				(*i)->drawResult(frame,1.3*1/TRACKING_TO_BODYSIZE_RATIO);
+
+				if ((*i)->getIsNovice())
+					_num_novice++;
+				else
+					_num_expert++;
 
 				Rect win=(*i)->getResultHistory().back();
 				Point tx(win.x,win.y-1);

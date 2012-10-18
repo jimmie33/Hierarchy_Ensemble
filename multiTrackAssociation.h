@@ -70,6 +70,10 @@ public:
 	void update();
 	vector<Rect>outputQualified(double thresh);
 	void feed(Rect bodysize_win,double response);
+	inline int getSize()
+	{
+		return w_list.size();
+	}
 };
 
 class Controller
@@ -142,6 +146,7 @@ private:
 	vector<Rect> _suspicious_rect_list;
 };
 
+
 class TrackerManager
 {
 public:
@@ -150,7 +155,29 @@ public:
 		double thresh_promotion);
 	~TrackerManager();	
 	void doWork(Mat& frame);
+	void drawStatistics(Mat& frame, Point p1, Point p2)
+	{
+		char buff[20];
+		int cand_n=0;//_controller.waitList.getSize();
+		int traker_n=_num_expert+_num_novice;
+		int middle_x1=p1.x+(p2.x-p1.x)*(double)(cand_n)/traker_n;
+		int middle_x2=p1.x+(p2.x-p1.x)*(double)(cand_n+_num_novice)/traker_n;
+		int height=p2.y-p1.y;
+		rectangle(frame,p1,Point(middle_x1,p2.y),Scalar(50,0,200),-1);
+		rectangle(frame,Point(middle_x1,p1.y),Point(middle_x2,p2.y),Scalar(50,255,255),-1);
+		rectangle(frame,Point(middle_x2,p1.y),p2,Scalar(50,200,0),-1);
 
+		Point org=Point(p1.x,p2.y+1.5*height);
+		string s="\#Novice: "+string(itoa(_num_novice,buff,10));
+		int baseline;
+		Size sz=getTextSize(s,FONT_HERSHEY_SIMPLEX,1.0,2,&baseline);
+		putText(frame,s,org,FONT_HERSHEY_SIMPLEX,(double)height/sz.height,Scalar(50,255,255),2);
+
+		org=org+Point(0,1.5*height);
+		s="\#Expert: "+string(itoa(_num_expert,buff,10));
+		sz=getTextSize(s,FONT_HERSHEY_SIMPLEX,1.0,2,&baseline);
+		putText(frame,s,org,FONT_HERSHEY_SIMPLEX,(double)height/sz.height,Scalar(50,200,0),2);
+	}
 	void setKey(char c)
 	{
 		_my_char = c;
@@ -166,6 +193,7 @@ private:
 	Mat* _frame_set;
 	list<EnsembleTracker*> _tracker_list;
 	int _tracker_count;
+	int _num_expert,_num_novice;
 	char _my_char;		
 	
 	Detector* _detector;

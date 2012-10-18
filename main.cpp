@@ -76,6 +76,8 @@ using namespace std;
 static string _sequence_path_;
 static string _detection_xml_file_;
 
+#define RECORD_VIDEO
+
 //Configuration
 int MAX_TRACKER_NUM;
 int MAX_TEMPLATE_SIZE;
@@ -156,18 +158,30 @@ void multiTrack(int readerType,int detectorType)
 	case XML:
 		detector=new XMLDetector(_detection_xml_file_.c_str());
 		break;
+	case TXT:
+		detector=new TxtDetector(_detection_xml_file_.c_str());
+		break;
 	default:
 		detector=new HogDetector();
 		break;
 	}
 
 	TrackerManager mTrack(detector,frame.size(),EXPERT_THRESH);
-	
+#ifdef RECORD_VIDEO
+	VideoWriter videoWriter("demo.avi",CV_FOURCC('D','I','V','X'),7,frame.size());
+	if (!videoWriter.isOpened())
+		cerr<<"fail to initialize video writer."<<endl;
+#endif
 	for (int frameCount=0;frame.data!=NULL;frameCount++)
 	{
 		mTrack.doWork(frame);
+		mTrack.drawStatistics(frame,Point(10,10),Point(150,30));
 		imshow("multiTrack", frame);
 		
+#ifdef RECORD_VIDEO
+		videoWriter<<frame;
+#endif
+
 		reader->readImg(frame);
 
 		char c = waitKey(1);
@@ -223,7 +237,7 @@ int main(int argc,char** argv)
 	if (argc>3)
 	{
 		_detection_xml_file_=string(argv[3]);
-		multiTrack(seq_format,XML);
+		multiTrack(seq_format,TXT);
 	}
 	else
 		multiTrack(seq_format,HOG);

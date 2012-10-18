@@ -1,5 +1,5 @@
 # Frmae rate of the input sequence (it will influence the kalman filter of the tracker and some volecity estimation)
-FRAME_RATE: 25
+FRAME_RATE: 30
 
 # The size of the temporal sliding window (number of frames) for some statistic estimations (The higher it is, the longer time it will take to initialize and terminate trackers. Recommended value is 7-11)
 TIME_WINDOW_SIZE: 11
@@ -17,7 +17,7 @@ MAX_TEMPLATE_SIZE: 10
 EXPERT_THRESH: 5
 
 # Rescale factor to transform the detection window to the body size window(some detectors' output window may include margin around the body. For opencv's hog detector, 0.64 is recomended)
-BODYSIZE_TO_DETECTION_RATIO: 0.64
+BODYSIZE_TO_DETECTION_RATIO: 1.0
 
 # Rescale factor to transform the body size window to the window for tracking (recommended value: 0.5-0.8)
 TRACKING_TO_BODYSIZE_RATIO: 0.5

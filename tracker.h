@@ -86,6 +86,11 @@ public:
 		Scalar s=sum(_recentHitRecord.row(0));
 		return s[0]/MIN((double)_recentHitRecord.cols,_result_history.size());		
 	}
+	inline double getHitFreqS()
+	{
+		Scalar s=sum(_recentHitRecord_s.row(0));
+		return s[0]/MIN((double)_recentHitRecord_s.cols,_result_history.size());		
+	}
 	inline double getHitMeanScore()
 	{
 		return mean(_recentHitRecord.row(1))[0];
@@ -193,7 +198,9 @@ private:
 	list<EnsembleTracker*> _neighbors;
 	bool _added_new;
 	Mat _recentHitRecord; 
+	Mat _recentHitRecord_s;
 	int _record_idx;
+	int _record_idx_s;
 };
 
 

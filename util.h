@@ -128,5 +128,12 @@ inline Rect scaleWin(Rect win, double scale)
 		(int)(win.width*scale),
 		(int)(win.height*scale));
 }
-
+inline Rect scaleWin(Rect win, double scale_w,double scale_h)
+{
+	return Rect(
+		(int)(win.x+0.5*(1-scale_w)*win.width),	// CAUTION: could be rounded better (+0.5)
+		(int)(win.y+0.5*(1-scale_h)*win.height),	 
+		(int)(win.width*scale_w),
+		(int)(win.height*scale_h));
+}
 #endif

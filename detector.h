@@ -28,6 +28,7 @@
 
 #include "opencv2/opencv.hpp"
 #include "opencv2/gpu/gpu.hpp"
+#include <fstream>
 
 #include "util.h"
 #include "dataReader.h"
@@ -35,6 +36,7 @@
 
 #define HOG 1
 #define XML 2
+#define TXT 3
 
 class Detector
 {
@@ -81,5 +83,19 @@ private:
 	vector<float> repsonse;//classifier response
 };
 
+class TxtDetector:public Detector
+{
+public:
+	TxtDetector(const char* filename);
+	~TxtDetector(){_file_p.close();}
+	virtual void detect(const Mat& frame);
+
+private:
+	ifstream _file_p;
+	int _count;
+	int _reader_pos;
+	bool _is_eof;
+	string _buff;
+};
 
 #endif
