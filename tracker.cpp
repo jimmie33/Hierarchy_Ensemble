@@ -220,7 +220,7 @@ void EnsembleTracker::calcConfidenceMap(const Mat* frame_set,Mat& occ_map)//****
 		// mask neighbors' area if they are not novices and they have more templates than this one
 		if ((*it)==NULL || (*it)->getIsNovice() || (*it)->getTemplateNum()<(int)_template_list.size())
 			continue;
-		Rect r=scaleWin((*it)->getBodysizeResult(),1.0);
+		Rect r=scaleWin((*it)->getBodysizeResult(),0.45);
 		ellipse(final_occ_map,Point((int)(r.x+0.5*r.width),(int)(r.y+0.5*r.height)),Size((int)(0.5*r.width),(int)(0.5*r.height)),0,0,360,Scalar(1),-1);
 	}
 	

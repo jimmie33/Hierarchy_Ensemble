@@ -415,6 +415,30 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 			_controller.waitList.feed(scaleWin(detection_left[i],BODYSIZE_TO_DETECTION_RATIO),1.0);
 	}
 }
+vector<Rect> TrackerManager::filterOverlapDetection(vector<Rect>& qualified)
+{
+	vector<Rect> ret;
+	for (int i=0;i<qualified.size();i++)
+	{
+		Rect r=qualified[i];
+		bool flag=true;
+		for (list<EnsembleTracker*>::iterator it=_tracker_list.begin();it!=_tracker_list.end();it++)
+		{
+			
+			//Rect ol=r&(*it)->getBodysizeResult();
+			double dis=getRectDist(r,(*it)->getBodysizeResult());
+			if (dis<0.5)
+			{
+				flag=false;
+				break;
+			}
+		}
+		if (flag)
+			ret.push_back(r);
+	}
+
+	return ret;
+}
 void TrackerManager::doWork(Mat& frame)
 {
 	Mat bgr,hsv,lab;
@@ -509,7 +533,7 @@ void TrackerManager::doWork(Mat& frame)
 	doHungarianAlg(good_detections);	
 
 	//start new trackers
-	vector<Rect> qualified=_controller.getQualifiedCandidates();
+	vector<Rect> qualified=filterOverlapDetection(_controller.getQualifiedCandidates());
 	for (size_t i=0;i<qualified.size();i++)
 	{
 		if (_tracker_list.size()<MAX_TRACKER_NUM)

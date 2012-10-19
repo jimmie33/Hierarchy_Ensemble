@@ -84,7 +84,7 @@ typedef Img<float> BwImageFloat;
 
 //distance of rectangle
 #define OVERLAP 0
-inline double getRectDist(Rect r1,Rect r2,int type)
+inline double getRectDist(Rect r1,Rect r2,int type=OVERLAP)
 {
 	Rect op=r1&r2;
 	return 1-(double)op.area()/(double)(r1.area()+r2.area()-op.area());

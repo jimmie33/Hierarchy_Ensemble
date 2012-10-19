@@ -178,8 +178,7 @@ void TxtDetector::detect(const Mat& frame)
 			int frame_id;
 			float x1,y1,x2,y2,score;
 			ss>>frame_id>>x1>>y1>>x2>>y2>>score;
-			if (score>0)
-				detection.push_back(scaleWin(Rect(x1,y1,x2-x1+1,y2-y1+1),1.2,1.0));
+			detection.push_back(scaleWin(Rect(x1,y1,x2-x1+1,y2-y1+1),1.2,1.0));
 		}
 
 		if (!_file_p.eof())
