@@ -238,7 +238,7 @@ void AppTemplate::calcBP(const Mat* frame_set, Mat& occ_map,Rect ROI)//*********
 	Mat roi_backproj(confidence_map,roi-Point(ROI.x, ROI.y));
 	Mat roi_mask(occ_map,roi);//occ_map: 1 for no occupancy, 0 for occupancy
 	calcBackProject(roi_set,3,channels,hist,roi_backproj,hRange);
-	roi_backproj.setTo(Scalar(10.0),roi_mask);
+	roi_backproj.setTo(Scalar(15.0),roi_mask);
 	confidence_map.convertTo(confidence_map,CV_32FC1);//[0,255]
 }
 void AppTemplate::calcScore(Rect b_inner,Rect b_outer)//*******************

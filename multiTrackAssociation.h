@@ -102,7 +102,7 @@ public:
 		/*
 		For modifying the birth condition for trackers, change here.
 		*/
-		double l=FRAME_RATE*0.5/*_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate)*/;
+		double l=FRAME_RATE*0.35/*_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate)*/;
 		return waitList.outputQualified((l-sqrt(l)-1.0));		
 	}
 private:
@@ -169,13 +169,13 @@ public:
 		rectangle(frame,Point(middle_x2,p1.y),p2,Scalar(50,200,0),-1);
 
 		Point org=Point(p1.x,p2.y+1.5*height);
-		string s="\#Novice: "+string(itoa(_num_novice,buff,10));
+		string s="Novice: "+string(itoa(_num_novice,buff,10));
 		int baseline;
 		Size sz=getTextSize(s,FONT_HERSHEY_SIMPLEX,1.0,2,&baseline);
 		putText(frame,s,org,FONT_HERSHEY_SIMPLEX,(double)height/sz.height,Scalar(50,255,255),2);
 
 		org=org+Point(0,1.5*height);
-		s="\#Expert: "+string(itoa(_num_expert,buff,10));
+		s="Expert: "+string(itoa(_num_expert,buff,10));
 		sz=getTextSize(s,FONT_HERSHEY_SIMPLEX,1.0,2,&baseline);
 		putText(frame,s,org,FONT_HERSHEY_SIMPLEX,(double)height/sz.height,Scalar(50,200,0),2);
 	}

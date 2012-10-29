@@ -142,6 +142,13 @@ public:
 		setIdentity(_kf.measurementNoiseCov,Scalar::all(1.0*(float)body_width*(float)body_width));
 	}
 
+	inline void forceKfByDet(Rect win)
+	{
+		correct_kf(_kf,win);
+		Point center(_kf.statePost.at<float>(0,0),_kf.statePost.at<float>(1,0));
+		_result_bodysize_temp = Rect(center.x-0.5*_result_bodysize_temp.width,center.y-0.5*_result_bodysize_temp.height,_result_bodysize_temp.width,_result_bodysize_temp.height);
+		_result_temp=scaleWin(_result_bodysize_temp,TRACKING_TO_BODYSIZE_RATIO);
+	}
 private:
 	inline void init_kf(Rect win)
 	{

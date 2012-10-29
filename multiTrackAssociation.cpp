@@ -78,7 +78,7 @@ void WaitingList::feed(Rect gt_win,double response)
 		double dis=sqrt(pow(x1-x2,2.0)+pow(y1-y2,2.0))*FRAME_RATE;
 		double scale_ratio=(*it).currentWin.width/(double)gt_win.width;
 		// greedily seek near detection with similar size as the consecutive one
-		if (dis<(*it).currentWin.width*2.3 && scale_ratio<1.1 && scale_ratio>0.90) // some consistancy heuristics
+		if (dis<(*it).currentWin.width*2.5 && scale_ratio<1.3 && scale_ratio>0.76) // some consistancy heuristics
 		{
 			(*it).currentWin=gt_win;
 			(*it).center=Point((int)(gt_win.x+0.5*gt_win.width),(int)(gt_win.y+0.5*gt_win.height));
@@ -295,7 +295,7 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 						double dis_to_last=(*j_tl)->getDisToLast(shrinkWin);
 
 						/* ad hoc consistence enhancing rule, making association better*/
-						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width*1.0))
+						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width*1.5/*1.0*/))
 						{								
 							matrix(i,j)=d;//*h;
 						}
@@ -324,6 +324,10 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 					(*j_tl)->addAppTemplate(_frame_set,shrinkWin);//will change result_temp if demoted
 					flag=true;
 					
+					// soft correction by correcting the kalman filter using the detection win
+					(*j_tl)->forceKfByDet(shrinkWin);
+
+
 					if ((*j_tl)->getIsNovice())//release the suspension
 						(*j_tl)->promote();					
 					
@@ -363,12 +367,12 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 					double detectWin_cy=detection_left[i].y+0.5*detection_left[i].height+0.5;
 					double d=sqrt(pow(currentWin_cx-detectWin_cx,2.0)+pow(currentWin_cy-detectWin_cy,2.0));
 					double ratio=(double)(*j_tl)->getBodysizeResult().width/detect_win_GTsize.width;
-					if (d<(*j_tl)->getAssRadius()/* && ratio<1.2 && ratio>0.8*/)
+					if (d<(*j_tl)->getAssRadius() && ratio<1.2 && ratio>0.8)
 					{			
 						double dis_to_last=(*j_tl)->getDisToLast(shrinkWin);
 						
 						// ad hoc consistence enhancing rule, making association better
-						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width)*2)					
+						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width)*1.0)					
 							matrix(i,j)=d;//************could be changed
 						else
 							matrix(i,j)=INFINITY;
@@ -427,7 +431,7 @@ vector<Rect> TrackerManager::filterOverlapDetection(vector<Rect>& qualified)
 			
 			//Rect ol=r&(*it)->getBodysizeResult();
 			double dis=getRectDist(r,(*it)->getBodysizeResult());
-			if (dis<0.5)
+			if (dis<0.7)
 			{
 				flag=false;
 				break;
@@ -533,7 +537,8 @@ void TrackerManager::doWork(Mat& frame)
 	doHungarianAlg(good_detections);	
 
 	//start new trackers
-	vector<Rect> qualified=filterOverlapDetection(_controller.getQualifiedCandidates());
+	vector<Rect> quli=_controller.getQualifiedCandidates();
+	vector<Rect> qualified=filterOverlapDetection(quli);
 	for (size_t i=0;i<qualified.size();i++)
 	{
 		if (_tracker_list.size()<MAX_TRACKER_NUM)
