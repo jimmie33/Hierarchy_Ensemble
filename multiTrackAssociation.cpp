@@ -198,7 +198,7 @@ void Controller::deleteObsoleteTracker(list<EnsembleTracker*>& _tracker_list)
 	for (list<EnsembleTracker*>::iterator it=_tracker_list.begin();it!=_tracker_list.end();)
 	{	
 		if(
-			(*it)->getHitFreq()*TIME_WINDOW_SIZE<=0/*MAX(l-2*sqrt(l),0)*/ &&
+			(*it)->getHitFreq()*TIME_WINDOW_SIZE<=0/*MAX(l-2*sqrt(l),0)*/ && (*it)->getIsNovice() &&
 			(*it)->getHitFreqS()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0) 
 			)
 		{
@@ -290,7 +290,7 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 					double d=sqrt(pow(currentWin_cx-detectWin_cx,2.0)+pow(currentWin_cy-detectWin_cy,2.0));
 
 					double ratio=(double)(*j_tl)->getBodysizeResult().width/detect_win_GTsize.width;
-					if (d<(*j_tl)->getAssRadius() /*&& ratio<1.2 && ratio>0.8*/)
+					if (d<(*j_tl)->getAssRadius() && ratio<1.2 && ratio>0.8 && (*j_tl)->compareHisto(_frame_set[0],detect_win_GTsize)>HIST_MATCH_THRESH_CONT)
 					{
 						double dis_to_last=(*j_tl)->getDisToLast(shrinkWin);
 
@@ -367,12 +367,14 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 					double detectWin_cy=detection_left[i].y+0.5*detection_left[i].height+0.5;
 					double d=sqrt(pow(currentWin_cx-detectWin_cx,2.0)+pow(currentWin_cy-detectWin_cy,2.0));
 					double ratio=(double)(*j_tl)->getBodysizeResult().width/detect_win_GTsize.width;
-					if (d<(*j_tl)->getAssRadius() && ratio<1.2 && ratio>0.8)
+					if (d<(*j_tl)->getAssRadius() && 
+						ratio<1.2 && ratio>0.8 && 
+						(*j_tl)->compareHisto(_frame_set[0],detect_win_GTsize)>HIST_MATCH_THRESH_CONT)
 					{			
 						double dis_to_last=(*j_tl)->getDisToLast(shrinkWin);
 						
 						// ad hoc consistence enhancing rule, making association better
-						if (dis_to_last/(((double)(*j_tl)->getSuspensionCount()+1)/(FRAME_RATE*5/7)+0.5)<((*j_tl)->getBodysizeResult().width)*1.0)					
+						if (dis_to_last/*/(((double)(*j_tl)->getSuspensionCount()+1)/(FRAME_RATE*5/7)+0.5)*/<((*j_tl)->getBodysizeResult().width)*0.8)					
 							matrix(i,j)=d;//************could be changed
 						else
 							matrix(i,j)=INFINITY;
@@ -398,6 +400,10 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 				{
 					(*j_tl)->addAppTemplate(_frame_set,shrinkWin);//will change result_temp if demoted
 					flag=true;
+
+					// soft correction by correcting the kalman filter using the detection win
+					(*j_tl)->forceKfByDet(shrinkWin);
+
 					if ((*j_tl)->getIsNovice())//release the suspension
 						(*j_tl)->promote();					
 					
@@ -520,10 +526,10 @@ void TrackerManager::doWork(Mat& frame)
 			
 		//kill the tracker if it gets out of border
 		Rect avgWin=(*i)->getResult();
-		if (avgWin.x<=0 || 
-			avgWin.x+avgWin.width>=_frame_set[0].cols-1 || 
-			avgWin.y<=0 || 
-			avgWin.y+avgWin.height>=_frame_set[0].rows-1)
+		if (avgWin.x<0 || 
+			avgWin.x+avgWin.width>_frame_set[0].cols-1 || 
+			avgWin.y<0 || 
+			avgWin.y+avgWin.height>_frame_set[0].rows-1)
 		{
 			(*i)->refcDec1();
 			(*i)->dump();

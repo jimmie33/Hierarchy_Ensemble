@@ -138,7 +138,7 @@ public:
 	inline void updateKfCov(double body_width)
 	{
 		Mat m_temp=*(Mat_<float>(4,4)<<0.025,0,0,0,0,0.025,0,0,0,0,0.25,0,0,0,0,0.25);
-		_kf.processNoiseCov=m_temp*((float)body_width/FRAME_RATE)*((float)body_width/FRAME_RATE);
+		_kf.processNoiseCov=m_temp*100.0*((float)body_width/FRAME_RATE)*((float)body_width/FRAME_RATE);
 		setIdentity(_kf.measurementNoiseCov,Scalar::all(1.0*(float)body_width*(float)body_width));
 	}
 

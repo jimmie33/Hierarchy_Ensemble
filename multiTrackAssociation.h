@@ -102,7 +102,7 @@ public:
 		/*
 		For modifying the birth condition for trackers, change here.
 		*/
-		double l=FRAME_RATE*0.35/*_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate)*/;
+		double l=FRAME_RATE*0.2/*_hit_record._getAvgHittingRate(_alpha_hitting_rate,_beta_hitting_rate)*/;
 		return waitList.outputQualified((l-sqrt(l)-1.0));		
 	}
 private:

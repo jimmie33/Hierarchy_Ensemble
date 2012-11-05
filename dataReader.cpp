@@ -230,7 +230,7 @@ bool TXTBBoxWriter::putNextFrameResult(vector<Result2D>& result)
 	for (int i=0;i<result.size();i++)
 	{
 		Result2D r=result[i];
-		_writer<<_frame_count<<" "<<r.xc<<" "<<r.yc<<" "<<r.w<<" "<<r.h<<endl;
+		_writer<<_frame_count<<" "<<r.id<<" "<<r.xc<<" "<<r.yc<<" "<<r.w<<" "<<r.h<<endl;
 	}
 	_frame_count++;
 	return true;

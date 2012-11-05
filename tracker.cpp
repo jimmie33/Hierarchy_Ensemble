@@ -24,8 +24,8 @@
 
 #include "tracker.h"
 
-#define SCALE_UPDATE_RATE 0.4
-#define HIST_MATCH_UPDATE 0.01
+#define SCALE_UPDATE_RATE 0.1
+#define HIST_MATCH_UPDATE 0.0001
 
 list<EnsembleTracker*> EnsembleTracker::_TRASH_LIST;
 void EnsembleTracker::dump()
@@ -188,8 +188,10 @@ void EnsembleTracker::addAppTemplate(const Mat* frame_set,Rect iniWin)
 	
 	// update the tracking result
 	if (
-		 _result_history.size()==0|| // if new tracker
-		getIsNovice()) // if novice
+		 _result_history.size()==0/*
+		|| // if new tracker
+				getIsNovice()*/
+		) // if novice
 	{
 		_result_temp=iniWin;
 		_result_last_no_sus=iniWin;
@@ -202,7 +204,7 @@ void EnsembleTracker::calcConfidenceMap(const Mat* frame_set,Mat& occ_map)//****
 {
 	// use the kalman filter prediction to locate the roi of confidence map (backprojection map)
 	_kf.predict();
-	Point center((int)_kf.statePre.at<float>(0,0),(int)_kf.statePre.at<float>(1,0));
+	Point center((int)_kf.statePost.at<float>(0,0),(int)_kf.statePost.at<float>(1,0));//jimmie: state pre was used
 	double w=_window_size.width/TRACKING_TO_BODYSIZE_RATIO;
 	double h=_window_size.height/TRACKING_TO_BODYSIZE_RATIO; 
 	h+=2*w;
