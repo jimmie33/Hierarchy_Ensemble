@@ -198,8 +198,7 @@ void Controller::deleteObsoleteTracker(list<EnsembleTracker*>& _tracker_list)
 	for (list<EnsembleTracker*>::iterator it=_tracker_list.begin();it!=_tracker_list.end();)
 	{	
 		if(
-			(*it)->getHitFreq()*TIME_WINDOW_SIZE<=0/*MAX(l-2*sqrt(l),0)*/ &&
-			(*it)->getHitFreqS()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0) 
+			((*it)->getHitFreq()*TIME_WINDOW_SIZE<=MAX(l-2*sqrt(l),0)) 
 			)
 		{
 			(*it)->refcDec1();
@@ -447,7 +446,7 @@ void TrackerManager::doWork(Mat& frame)
 	vector<Rect> good_detections;
 	for (size_t k=0;k<detections.size();k++)
 	{
-		if (det_filter[k]!=BAD)
+		//if (det_filter[k]!=BAD)
 			good_detections.push_back(detections[k]);
 	}
 

@@ -176,7 +176,8 @@ void multiTrack(int readerType,int detectorType)
 	if (!videoWriter.isOpened())
 		cerr<<"fail to initialize video writer."<<endl;
 #endif
-	for (int frameCount=0;frame.data!=NULL;frameCount++)
+	
+	for (int frameCount=0;frame.data!=NULL && frameCount<4500;frameCount++)
 	{
 		mTrack.doWork(frame);
 		//mTrack.drawStatistics(frame,Point(10,10),Point(150,30));
@@ -239,9 +240,9 @@ int main(int argc,char** argv)
 	else 
 		seq_format=VIDEO;
 	
-	if (argc>3)
+	if (argc>4)
 	{
-		_detection_xml_file_=string(argv[3]);
+		_detection_xml_file_=string(argv[4]);
 		multiTrack(seq_format,TXT);
 	}
 	else

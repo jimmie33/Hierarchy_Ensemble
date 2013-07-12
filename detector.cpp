@@ -146,7 +146,7 @@ void HogDetector::detect(const Mat& frame)
 /* ****** ****** */
 
 TxtDetector::TxtDetector(const char* filename)
-	:_file_p(filename),_count(0),_reader_pos(-1),_is_eof(false),Detector(TXT)
+	:_file_p(filename),_count(1),_reader_pos(-1),_is_eof(false),Detector(TXT)
 {
 	if (!_file_p.is_open())
 	{
