@@ -183,7 +183,7 @@ public:
 		_my_char = c;
 	}	
 private:	
-	void doHungarianAlg(const vector<Rect>& detections);
+	vector<Result2D> doHungarianAlg(const vector<Rect>& detections);
 	inline static bool compareTraGroup(EnsembleTracker* c1,EnsembleTracker* c2)
 	{
 		return c1->getTemplateNum()>c2->getTemplateNum() ? true:false;

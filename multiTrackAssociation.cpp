@@ -78,7 +78,7 @@ void WaitingList::feed(Rect gt_win,double response)
 		double dis=sqrt(pow(x1-x2,2.0)+pow(y1-y2,2.0))*FRAME_RATE;
 		double scale_ratio=(*it).currentWin.width/(double)gt_win.width;
 		// greedily seek near detection with similar size as the consecutive one
-		if (dis<(*it).currentWin.width*2.3 && scale_ratio<1.1 && scale_ratio>0.90) // some consistancy heuristics
+		if (dis<(*it).currentWin.width*2.6 && scale_ratio<1.2 && scale_ratio>0.80) // some consistancy heuristics
 		{
 			(*it).currentWin=gt_win;
 			(*it).center=Point((int)(gt_win.x+0.5*gt_win.width),(int)(gt_win.y+0.5*gt_win.height));
@@ -250,8 +250,9 @@ TrackerManager::~TrackerManager()
 	for (list<EnsembleTracker*>::iterator i=_tracker_list.begin();i!=_tracker_list.end();i++)
 		delete *i;
 }
-void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
+vector<Result2D> TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 {
+	vector<Result2D> output;
 	_controller.waitList.update();
 
 	list<EnsembleTracker*> expert_class;
@@ -316,11 +317,13 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 			bool flag=false;
 			list<EnsembleTracker*>::iterator j_tl=expert_class.begin();
 			Rect shrinkWin=scaleWin(detections[i],TRACKING_TO_DETECTION_RATIO);
+			Rect win = detections[i];
 			for (int j=0;j<hp_size;j++)
 			{
 				if (matrix(i,j)==0)//matched
 				{
 					(*j_tl)->addAppTemplate(_frame_set,shrinkWin);//will change result_temp if demoted
+					output.push_back(Result2D((*j_tl)->getID(),(float)(win.x+0.5*win.width),(float)(win.y+0.5*win.height),(float)win.width,(float)win.height));
 					flag=true;
 					
 					if ((*j_tl)->getIsNovice())//release the suspension
@@ -387,11 +390,13 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 			bool flag=false;
 			list<EnsembleTracker*>::iterator j_tl=novice_class.begin();
 			Rect shrinkWin=scaleWin(detection_left[i],TRACKING_TO_DETECTION_RATIO);
+			Rect win = detection_left[i];
 			for (int j=0;j<hp_size;j++)
 			{
 				if (matrix(i,j)==0)//matched
 				{
 					(*j_tl)->addAppTemplate(_frame_set,shrinkWin);//will change result_temp if demoted
+					output.push_back(Result2D((*j_tl)->getID(),(float)(win.x+0.5*win.width),(float)(win.y+0.5*win.height),(float)win.width,(float)win.height));
 					flag=true;
 					if ((*j_tl)->getIsNovice())//release the suspension
 						(*j_tl)->promote();					
@@ -413,6 +418,7 @@ void TrackerManager::doHungarianAlg(const vector<Rect>& detections)
 		for (int i=0;i<dt_size;i++)
 			_controller.waitList.feed(scaleWin(detection_left[i],BODYSIZE_TO_DETECTION_RATIO),1.0);
 	}
+	return output;
 }
 void TrackerManager::doWork(Mat& frame)
 {
@@ -505,7 +511,7 @@ void TrackerManager::doWork(Mat& frame)
 	}
 		
 	// do detection association, and promote trackers here
-	doHungarianAlg(good_detections);	
+	vector<Result2D> output = doHungarianAlg(good_detections);	
 
 	//start new trackers
 	vector<Rect> qualified=_controller.getQualifiedCandidates();
@@ -526,7 +532,7 @@ void TrackerManager::doWork(Mat& frame)
 	_num_expert=0;
 	_num_novice=0;
 	// register results and draw
-	vector<Result2D> output;
+	//vector<Result2D> output;
 	for (list<EnsembleTracker*>::iterator i=_tracker_list.begin();i!=_tracker_list.end();i++)
 	{
 		(*i)->registerTrackResult();//record the final output!!!
@@ -554,10 +560,10 @@ void TrackerManager::doWork(Mat& frame)
 				putText(frame,s,tx,FONT_HERSHEY_PLAIN ,1.5,COLOR((*i)->getID()),2);
 
 				//output result to xml
-				double scale=1/TRACKING_TO_BODYSIZE_RATIO-1;
-				Size expand_size((int)(scale*win.width+0.5),(int)(scale*win.height+0.5));
-				win=win+expand_size-Point((int)(0.5*scale*win.width+0.5),(int)(0.5*scale*win.height+0.5));
-				output.push_back(Result2D((*i)->getID(),(float)(win.x+0.5*win.width),(float)(win.y+0.5*win.height),(float)win.width,(float)win.height));
+				//double scale=1/TRACKING_TO_BODYSIZE_RATIO-1;
+				//Size expand_size((int)(scale*win.width+0.5),(int)(scale*win.height+0.5));
+				//win=win+expand_size-Point((int)(0.5*scale*win.width+0.5),(int)(0.5*scale*win.height+0.5));
+				//output.push_back(Result2D((*i)->getID(),(float)(win.x+0.5*win.width),(float)(win.y+0.5*win.height),(float)win.width,(float)win.height));
 			}				
 		}
 		// draw matching radius

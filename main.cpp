@@ -78,7 +78,7 @@ static string _sequence_path_;
 static string _detection_xml_file_;
 static string _out_dir_;
 
-#define RECORD_VIDEO
+//#define RECORD_VIDEO
 
 //Configuration
 int MAX_TRACKER_NUM;
